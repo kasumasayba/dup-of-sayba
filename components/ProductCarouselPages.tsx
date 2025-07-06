@@ -201,45 +201,4 @@ export function ProductCarouselPages({
               className="w-10 h-10 bg-gray-900/90 backdrop-blur-sm border border-gray-600 text-white hover:bg-orange-500/20 hover:border-orange-500 hover:text-orange-400 transition-all duration-300 rounded-full disabled:opacity-50 shadow-lg min-h-[40px] min-w-[40px] touch-manipulation"
             >
               <svg className="h-4 w-4 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-              </svg>
-            </motion.button>
-          </div>
-
-          <div className="absolute right-1 top-1/2 transform -translate-y-1/2 z-10">
-            <motion.button
-              onClick={nextSlide}
-              disabled={isTransitioning}
-              whileHover={{ scale: 1.1, x: 1 }}
-              whileTap={{ scale: 0.9 }}
-              className="w-10 h-10 bg-gray-900/90 backdrop-blur-sm border border-gray-600 text-white hover:bg-orange-500/20 hover:border-orange-500 hover:text-orange-400 transition-all duration-300 rounded-full disabled:opacity-50 shadow-lg min-h-[40px] min-w-[40px] touch-manipulation"
-            >
-              <svg className="h-4 w-4 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-              </svg>
-            </motion.button>
-          </div>
-        </div>
-      </div>
-
-      {/* Page Indicators - Much Smaller */}
-      <div className="flex justify-center space-x-1.5 mt-6">
-        {products.map((_, index) => (
-          <motion.button
-            key={index}
-            onClick={() => goToSlide(index)}
-            onMouseEnter={playHover}
-            disabled={isTransitioning}
-            whileHover={{ scale: 1.5 }}
-            whileTap={{ scale: 0.8 }}
-            className={`w-1.5 h-1.5 rounded-full transition-all duration-300 disabled:opacity-50 min-h-[24px] min-w-[24px] flex items-center justify-center touch-manipulation ${
-              currentSlide === index ? "bg-orange-500 shadow-lg shadow-orange-500/50" : "bg-gray-600 hover:bg-gray-500"
-            }`}
-          >
-            <div className={`w-1.5 h-1.5 rounded-full ${currentSlide === index ? "bg-orange-500" : "bg-gray-600"}`} />
-          </motion.button>
-        ))}
-      </div>
-    </div>
-  )
-}
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7\

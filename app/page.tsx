@@ -471,35 +471,20 @@ export default function SaybaArcLinktree() {
         <div className="container mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
-              {/* Square and circular logo like v3 */}
-              <div className="flex items-center space-x-3">
-                <motion.div
-                  whileHover={{ scale: 1.05, rotate: 5 }}
-                  whileTap={{ scale: 0.95 }}
-                  className="w-10 h-10 rounded-lg border-2 border-orange-500/50 flex items-center justify-center overflow-hidden bg-gray-800/50 backdrop-blur-sm transition-all duration-300 hover:border-orange-500 hover:shadow-lg hover:shadow-orange-500/20"
-                >
-                  <Image
-                    src="/sayba-square-logo.png"
-                    alt="Sayba Arc Logo"
-                    width={40}
-                    height={40}
-                    className="w-full h-full object-cover"
-                  />
-                </motion.div>
-                <motion.div
-                  whileHover={{ scale: 1.05, rotate: -5 }}
-                  whileTap={{ scale: 0.95 }}
-                  className="w-10 h-10 rounded-full border-2 border-orange-500/50 flex items-center justify-center overflow-hidden bg-gray-800/50 backdrop-blur-sm transition-all duration-300 hover:border-orange-500 hover:shadow-lg hover:shadow-orange-500/20"
-                >
-                  <Image
-                    src="/sayba-square-logo.png"
-                    alt="Sayba Arc Logo"
-                    width={40}
-                    height={40}
-                    className="w-full h-full object-cover rounded-full"
-                  />
-                </motion.div>
-              </div>
+              {/* Square logo for header */}
+              <motion.div
+                whileHover={{ scale: 1.05, rotate: 5 }}
+                whileTap={{ scale: 0.95 }}
+                className="w-12 h-12 rounded-lg border-2 border-orange-500/50 flex items-center justify-center overflow-hidden bg-gray-800/50 backdrop-blur-sm transition-all duration-300 hover:border-orange-500 hover:shadow-lg hover:shadow-orange-500/20"
+              >
+                <Image
+                  src="/sayba-square-logo.png"
+                  alt="Sayba Arc Logo"
+                  width={48}
+                  height={48}
+                  className="w-full h-full object-cover"
+                />
+              </motion.div>
               <h1 className="text-xl font-bold text-white">{t("sayba.arc")}</h1>
             </div>
             <div className="flex items-center space-x-3">
@@ -521,35 +506,20 @@ export default function SaybaArcLinktree() {
         <div className="px-4 py-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
-              {/* Square and circular logo for mobile */}
-              <div className="flex items-center space-x-2">
-                <motion.div
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  className="w-8 h-8 rounded border-2 border-orange-500/50 flex items-center justify-center overflow-hidden bg-gray-800/50 backdrop-blur-sm transition-all duration-300 hover:border-orange-500"
-                >
-                  <Image
-                    src="/sayba-square-logo.png"
-                    alt="Sayba Arc Logo"
-                    width={32}
-                    height={32}
-                    className="w-full h-full object-cover"
-                  />
-                </motion.div>
-                <motion.div
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  className="w-8 h-8 rounded-full border-2 border-orange-500/50 flex items-center justify-center overflow-hidden bg-gray-800/50 backdrop-blur-sm transition-all duration-300 hover:border-orange-500"
-                >
-                  <Image
-                    src="/sayba-square-logo.png"
-                    alt="Sayba Arc Logo"
-                    width={32}
-                    height={32}
-                    className="w-full h-full object-cover rounded-full"
-                  />
-                </motion.div>
-              </div>
+              {/* Square logo for mobile header */}
+              <motion.div
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="w-10 h-10 rounded border-2 border-orange-500/50 flex items-center justify-center overflow-hidden bg-gray-800/50 backdrop-blur-sm transition-all duration-300 hover:border-orange-500"
+              >
+                <Image
+                  src="/sayba-square-logo.png"
+                  alt="Sayba Arc Logo"
+                  width={40}
+                  height={40}
+                  className="w-full h-full object-cover"
+                />
+              </motion.div>
               <h1 className="text-lg font-bold text-white">{t("sayba.arc")}</h1>
             </div>
             <div className="flex items-center space-x-2">
@@ -638,7 +608,7 @@ export default function SaybaArcLinktree() {
           {/* Desktop Layout */}
           <div className="hidden lg:block">
             <div className="max-w-7xl mx-auto">
-              {/* Hero Section - More Elegant and Minimalist */}
+              {/* Hero Section - Full circular logo */}
               <AnimatedSection className="text-center mb-16">
                 <div className="mb-12">
                   <motion.div
@@ -652,7 +622,7 @@ export default function SaybaArcLinktree() {
                       alt="Sayba Arc - Art You Believe"
                       width={160}
                       height={160}
-                      className="w-32 h-32 object-cover rounded-full"
+                      className="w-full h-full object-cover rounded-full"
                     />
                   </motion.div>
                 </div>
@@ -736,7 +706,7 @@ export default function SaybaArcLinktree() {
 
           {/* Mobile Layout */}
           <div className="lg:hidden w-full max-w-sm mx-auto">
-            {/* Mobile Hero - More Elegant */}
+            {/* Mobile Hero - Full circular logo */}
             <AnimatedSection className="text-center mb-12">
               <div className="mb-8">
                 <motion.div
@@ -750,7 +720,7 @@ export default function SaybaArcLinktree() {
                     alt="Sayba Arc - Art You Believe"
                     width={112}
                     height={112}
-                    className="w-20 h-20 object-cover rounded-full"
+                    className="w-full h-full object-cover rounded-full"
                   />
                 </motion.div>
               </div>
@@ -1068,7 +1038,7 @@ export default function SaybaArcLinktree() {
                 </motion.a>
               </div>
 
-              {/* Modal Slide Indicators - Much Smaller */}
+              {/* Modal Slide Indicators - Much Smaller without shadows */}
               <div className="flex justify-center space-x-1.5 mt-6">
                 {products.map((_, index) => (
                   <motion.button
