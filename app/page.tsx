@@ -455,12 +455,12 @@ export default function SaybaArcLinktree() {
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
               {/* Square logo for mobile header */}
-              <div className="w-10 h-10 rounded border border-orange-500/30 flex items-center justify-center overflow-hidden bg-gray-800/30 backdrop-blur-sm">
+              <div className="w-12 h-12 rounded border border-orange-500/30 flex items-center justify-center overflow-hidden bg-gray-800/30 backdrop-blur-sm">
                 <Image
                   src="/sayba-square-logo.png"
                   alt="Sayba Arc Logo"
-                  width={40}
-                  height={40}
+                  width={48}
+                  height={48}
                   className="w-full h-full object-cover"
                 />
               </div>
@@ -475,8 +475,8 @@ export default function SaybaArcLinktree() {
         </div>
       </nav>
 
-      {/* Floating Social Media Chat */}
-      <div className="fixed bottom-6 right-6 z-50">
+      {/* Floating Social Media Chat - Optimized for touch */}
+      <div className="fixed bottom-6 right-4 md:right-6 z-50">
         <div className="relative">
           {/* Social Media Options */}
           <div
@@ -488,7 +488,7 @@ export default function SaybaArcLinktree() {
           >
             {socialLinks.map((social, index) => (
               <div key={index} className="flex items-center justify-end space-x-3">
-                <span className="bg-gray-800/90 backdrop-blur-sm text-white px-3 py-2 rounded-lg text-sm whitespace-nowrap border border-gray-600">
+                <span className="bg-gray-800/90 backdrop-blur-sm text-white px-3 py-2 rounded-lg text-sm whitespace-nowrap border border-gray-600 hidden md:block">
                   {social.label}
                 </span>
                 <a
@@ -497,7 +497,7 @@ export default function SaybaArcLinktree() {
                   rel="noopener noreferrer"
                   onClick={handleLinkClick}
                   onMouseEnter={playHover}
-                  className={`w-12 h-12 ${social.color} rounded-full flex items-center justify-center text-white shadow-lg transition-all duration-200 hover:scale-105`}
+                  className={`w-14 h-14 md:w-12 md:h-12 ${social.color} rounded-full flex items-center justify-center text-white shadow-lg transition-all duration-200 hover:scale-105 active:scale-95 touch-manipulation`}
                 >
                   {social.icon}
                 </a>
@@ -505,20 +505,24 @@ export default function SaybaArcLinktree() {
             ))}
           </div>
 
-          {/* Main Chat Button */}
+          {/* Main Chat Button - Larger for mobile */}
           <button
             onClick={handleSocialToggle}
             onMouseEnter={playHover}
-            className="w-16 h-16 bg-gradient-to-r from-orange-500 to-orange-600 rounded-full flex items-center justify-center text-white shadow-lg transition-all duration-200 hover:scale-105"
+            className="w-16 h-16 md:w-16 md:h-16 bg-gradient-to-r from-orange-500 to-orange-600 rounded-full flex items-center justify-center text-white shadow-lg transition-all duration-200 hover:scale-105 active:scale-95 touch-manipulation"
           >
-            {socialMenuOpen ? <X className="h-6 w-6" /> : <MessageSquare className="h-6 w-6" />}
+            {socialMenuOpen ? (
+              <X className="h-7 w-7 md:h-6 md:w-6" />
+            ) : (
+              <MessageSquare className="h-7 w-7 md:h-6 md:w-6" />
+            )}
           </button>
         </div>
       </div>
 
       {/* Main Content */}
       <div className="pt-16 lg:pt-20 pb-32 w-full max-w-full overflow-x-hidden">
-        <div className="container mx-auto px-4 lg:px-8 py-8 max-w-full">
+        <div className="container mx-auto px-4 lg:px-8 py-6 md:py-8 max-w-full">
           {/* Desktop Layout */}
           <div className="hidden lg:block">
             <div className="max-w-6xl mx-auto">
@@ -608,26 +612,26 @@ export default function SaybaArcLinktree() {
             </div>
           </div>
 
-          {/* Mobile Layout */}
-          <div className="lg:hidden w-full max-w-sm mx-auto">
+          {/* Mobile Layout - Optimized for Android */}
+          <div className="lg:hidden w-full max-w-md mx-auto">
             {/* Mobile Hero */}
-            <AnimatedSection className="text-center mb-12">
+            <AnimatedSection className="text-center mb-10 px-4">
               <div className="mb-8">
-                <div className="w-24 h-24 mx-auto rounded-full border border-orange-500/30 shadow-xl flex items-center justify-center overflow-hidden relative bg-gray-800/30 backdrop-blur-sm">
+                <div className="w-28 h-28 mx-auto rounded-full border border-orange-500/30 shadow-xl flex items-center justify-center overflow-hidden relative bg-gray-800/30 backdrop-blur-sm">
                   <Image
                     src="/sayba-square-logo.png"
                     alt="Sayba Arc - Art You Believe"
-                    width={96}
-                    height={96}
+                    width={112}
+                    height={112}
                     className="w-full h-full object-cover rounded-full"
                   />
                 </div>
               </div>
               <div className="space-y-4">
-                <h1 className="text-3xl font-light text-white tracking-wide">Sayba Arc</h1>
+                <h1 className="text-4xl font-light text-white tracking-wide">Sayba Arc</h1>
                 <p className="text-lg text-orange-400 font-light tracking-wider">Art You Believe</p>
                 <div className="w-16 h-px bg-gradient-to-r from-transparent via-orange-500 to-transparent mx-auto"></div>
-                <p className="text-gray-400 text-sm leading-relaxed font-light px-4 text-center">
+                <p className="text-gray-400 text-base leading-relaxed font-light text-center">
                   Sayba Arc adalah penyedia layanan digital dan solusi kreatif terpercaya. Dengan motto 'Art You
                   Believe', kami menghadirkan berbagai layanan profesional mulai dari jasa tugas, web design, mobile
                   apps, graphic design, hingga AutoCAD service dan ArcGIS Service. Wujudkan ide kreatif Anda bersama
@@ -636,34 +640,34 @@ export default function SaybaArcLinktree() {
               </div>
             </AnimatedSection>
 
-            {/* Mobile Main Links */}
-            <AnimatedSection className="space-y-4 mb-12 px-2">
+            {/* Mobile Main Links - Optimized touch targets */}
+            <AnimatedSection className="space-y-4 mb-12 px-4">
               {mainLinks.map((link, index) => (
                 <a
                   key={index}
                   href={link.link}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="block group"
+                  className="block group touch-manipulation"
                   onClick={handleLinkClick}
                 >
-                  <Card className="bg-gray-800/30 backdrop-blur-sm border-gray-700/30 hover:bg-gray-800/50 transition-all duration-200">
-                    <CardContent className="p-4">
+                  <Card className="bg-gray-800/30 backdrop-blur-sm border-gray-700/30 hover:bg-gray-800/50 active:bg-gray-800/60 transition-all duration-200">
+                    <CardContent className="p-5">
                       <div className="flex items-center space-x-4">
                         <div
-                          className={`w-12 h-12 ${link.bgColor} rounded-lg flex items-center justify-center text-white`}
+                          className={`w-14 h-14 ${link.bgColor} rounded-lg flex items-center justify-center text-white flex-shrink-0`}
                         >
                           {link.icon}
                         </div>
-                        <div className="flex-1">
-                          <h3 className="text-white font-medium group-hover:text-orange-400 transition-colors duration-200">
+                        <div className="flex-1 min-w-0">
+                          <h3 className="text-white font-medium group-hover:text-orange-400 group-active:text-orange-400 transition-colors duration-200 text-base">
                             {t(link.titleKey)}
                           </h3>
-                          <p className="text-gray-400 text-sm group-hover:text-gray-300 transition-colors duration-200">
+                          <p className="text-gray-400 text-sm group-hover:text-gray-300 group-active:text-gray-300 transition-colors duration-200 mt-1">
                             {t(link.descriptionKey)}
                           </p>
                         </div>
-                        <ExternalLink className="h-4 w-4 text-gray-400 group-hover:text-orange-400 transition-colors duration-200" />
+                        <ExternalLink className="h-5 w-5 text-gray-400 group-hover:text-orange-400 group-active:text-orange-400 transition-colors duration-200 flex-shrink-0" />
                       </div>
                     </CardContent>
                   </Card>
@@ -672,9 +676,9 @@ export default function SaybaArcLinktree() {
             </AnimatedSection>
 
             {/* Mobile Product Pages Carousel */}
-            <AnimatedSection className="px-2">
+            <AnimatedSection className="px-4">
               <Card className="bg-gray-800/30 backdrop-blur-sm border-gray-700/30 mb-8">
-                <CardContent className="p-4">
+                <CardContent className="p-5">
                   <div className="text-center mb-6">
                     <h2 className="text-xl font-light text-white mb-2">{t("explore.collection")}</h2>
                     <p className="text-gray-400 text-sm font-light">{t("collection.subtitle")}</p>
@@ -699,27 +703,27 @@ export default function SaybaArcLinktree() {
         <footer className="bg-gray-900/95 border-t border-gray-700 py-8">
           <div className="container mx-auto px-4 lg:px-8">
             <div className="max-w-4xl mx-auto">
-              <div className="grid md:grid-cols-2 gap-8">
+              <div className="grid md:grid-cols-2 gap-6 md:gap-8">
                 <Card className="bg-gray-800/30 backdrop-blur-sm border-gray-700/30">
-                  <CardContent className="p-6">
+                  <CardContent className="p-5 md:p-6">
                     <h3 className="text-lg font-medium text-white mb-4">{t("get.in.touch")}</h3>
                     <div className="space-y-3">
                       <a
                         href="mailto:sayba.help@gmail.com"
                         onClick={handleLinkClick}
                         onMouseEnter={playHover}
-                        className="flex items-center space-x-3 text-gray-300 hover:text-orange-400 transition-colors duration-200"
+                        className="flex items-center space-x-3 text-gray-300 hover:text-orange-400 active:text-orange-400 transition-colors duration-200 touch-manipulation py-1"
                       >
-                        <Mail className="h-4 w-4" />
+                        <Mail className="h-4 w-4 flex-shrink-0" />
                         <span className="text-sm">sayba.help@gmail.com</span>
                       </a>
                       <a
                         href="tel:+6287721916495"
                         onClick={handleLinkClick}
                         onMouseEnter={playHover}
-                        className="flex items-center space-x-3 text-gray-300 hover:text-orange-400 transition-colors duration-200"
+                        className="flex items-center space-x-3 text-gray-300 hover:text-orange-400 active:text-orange-400 transition-colors duration-200 touch-manipulation py-1"
                       >
-                        <Phone className="h-4 w-4" />
+                        <Phone className="h-4 w-4 flex-shrink-0" />
                         <span className="text-sm">+62 877-2191-6495</span>
                       </a>
                       <a
@@ -728,9 +732,9 @@ export default function SaybaArcLinktree() {
                         rel="noopener noreferrer"
                         onClick={handleLinkClick}
                         onMouseEnter={playHover}
-                        className="flex items-center space-x-3 text-gray-300 hover:text-orange-400 transition-colors duration-200"
+                        className="flex items-center space-x-3 text-gray-300 hover:text-orange-400 active:text-orange-400 transition-colors duration-200 touch-manipulation py-1"
                       >
-                        <Globe className="h-4 w-4" />
+                        <Globe className="h-4 w-4 flex-shrink-0" />
                         <span className="text-sm">www.sayba.shop</span>
                       </a>
                     </div>
@@ -738,23 +742,23 @@ export default function SaybaArcLinktree() {
                 </Card>
 
                 <Card className="bg-gray-800/30 backdrop-blur-sm border-gray-700/30">
-                  <CardContent className="p-6">
+                  <CardContent className="p-5 md:p-6">
                     <h3 className="text-lg font-medium text-white mb-4">{t("why.choose.us")}</h3>
                     <div className="space-y-3">
                       <div className="flex items-start space-x-3">
-                        <div className="w-2 h-2 bg-orange-500 rounded-full mt-2"></div>
+                        <div className="w-2 h-2 bg-orange-500 rounded-full mt-2 flex-shrink-0"></div>
                         <p className="text-gray-300 text-sm">{t("professional.quality")}</p>
                       </div>
                       <div className="flex items-start space-x-3">
-                        <div className="w-2 h-2 bg-orange-500 rounded-full mt-2"></div>
+                        <div className="w-2 h-2 bg-orange-500 rounded-full mt-2 flex-shrink-0"></div>
                         <p className="text-gray-300 text-sm">{t("fast.turnaround")}</p>
                       </div>
                       <div className="flex items-start space-x-3">
-                        <div className="w-2 h-2 bg-orange-500 rounded-full mt-2"></div>
+                        <div className="w-2 h-2 bg-orange-500 rounded-full mt-2 flex-shrink-0"></div>
                         <p className="text-gray-300 text-sm">{t("customer.support")}</p>
                       </div>
                       <div className="flex items-start space-x-3">
-                        <div className="w-2 h-2 bg-orange-500 rounded-full mt-2"></div>
+                        <div className="w-2 h-2 bg-orange-500 rounded-full mt-2 flex-shrink-0"></div>
                         <p className="text-gray-300 text-sm">{t("competitive.pricing")}</p>
                       </div>
                     </div>
@@ -762,7 +766,7 @@ export default function SaybaArcLinktree() {
                 </Card>
               </div>
 
-              <div className="text-center text-gray-500 text-xs mt-8 pt-6 border-t border-gray-700">
+              <div className="text-center text-gray-500 text-xs mt-6 md:mt-8 pt-6 border-t border-gray-700">
                 <p>{t("copyright")}</p>
                 <p className="mt-1">{t("powered.by")}</p>
               </div>
@@ -771,7 +775,7 @@ export default function SaybaArcLinktree() {
         </footer>
       </AnimatedSection>
 
-      {/* Product Detail Modal */}
+      {/* Product Detail Modal - Optimized for mobile */}
       {isModalOpen && selectedProduct && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
           <motion.div
@@ -779,26 +783,26 @@ export default function SaybaArcLinktree() {
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0.95, opacity: 0 }}
             transition={{ duration: 0.2, ease: "easeOut" }}
-            className="bg-gray-800/95 backdrop-blur-sm rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-gray-700/50"
+            className="bg-gray-800/95 backdrop-blur-sm rounded-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto border border-gray-700/50"
           >
             {/* Modal Header */}
-            <div className="relative p-6 border-b border-gray-700/50">
+            <div className="relative p-4 md:p-6 border-b border-gray-700/50">
               <button
                 onClick={closeModal}
                 onMouseEnter={playHover}
-                className="absolute top-4 right-4 text-gray-400 hover:text-white transition-colors duration-200"
+                className="absolute top-4 right-4 text-gray-400 hover:text-white active:text-white transition-colors duration-200 w-8 h-8 flex items-center justify-center touch-manipulation"
               >
                 <X className="h-6 w-6" />
               </button>
 
-              <div className="text-center">
-                <h2 className="text-2xl font-light text-white mb-2">{t(selectedProduct.titleKey)}</h2>
-                <p className="text-orange-400 font-light">{t(selectedProduct.subtitleKey)}</p>
+              <div className="text-center pr-8">
+                <h2 className="text-xl md:text-2xl font-light text-white mb-2">{t(selectedProduct.titleKey)}</h2>
+                <p className="text-orange-400 font-light text-sm md:text-base">{t(selectedProduct.subtitleKey)}</p>
               </div>
             </div>
 
             {/* Modal Content */}
-            <div className="p-6">
+            <div className="p-4 md:p-6">
               {/* Product Image */}
               <div className="relative mb-6">
                 <div className="w-full max-w-xs mx-auto aspect-square rounded-lg overflow-hidden">
@@ -811,28 +815,30 @@ export default function SaybaArcLinktree() {
                   />
                 </div>
 
-                {/* Navigation Buttons */}
+                {/* Navigation Buttons - Larger for mobile */}
                 <button
                   onClick={prevModalSlide}
                   onMouseEnter={playHover}
-                  className="absolute left-4 top-1/2 transform -translate-y-1/2 w-10 h-10 bg-gray-900/90 backdrop-blur-sm border border-gray-600 text-white hover:border-orange-500 hover:text-orange-400 transition-all duration-200 rounded-full"
+                  className="absolute left-2 md:left-4 top-1/2 transform -translate-y-1/2 w-12 h-12 md:w-10 md:h-10 bg-gray-900/90 backdrop-blur-sm border border-gray-600 text-white hover:border-orange-500 hover:text-orange-400 active:border-orange-500 active:text-orange-400 transition-all duration-200 rounded-full touch-manipulation"
                 >
-                  <ChevronLeft className="h-5 w-5 mx-auto" />
+                  <ChevronLeft className="h-6 w-6 md:h-5 md:w-5 mx-auto" />
                 </button>
 
                 <button
                   onClick={nextModalSlide}
                   onMouseEnter={playHover}
-                  className="absolute right-4 top-1/2 transform -translate-y-1/2 w-10 h-10 bg-gray-900/90 backdrop-blur-sm border border-gray-600 text-white hover:border-orange-500 hover:text-orange-400 transition-all duration-200 rounded-full"
+                  className="absolute right-2 md:right-4 top-1/2 transform -translate-y-1/2 w-12 h-12 md:w-10 md:h-10 bg-gray-900/90 backdrop-blur-sm border border-gray-600 text-white hover:border-orange-500 hover:text-orange-400 active:border-orange-500 active:text-orange-400 transition-all duration-200 rounded-full touch-manipulation"
                 >
-                  <ChevronRight className="h-5 w-5 mx-auto" />
+                  <ChevronRight className="h-6 w-6 md:h-5 md:w-5 mx-auto" />
                 </button>
               </div>
 
               {/* Product Info */}
               <div className="text-left mb-6">
                 <h3 className="text-lg font-medium text-white mb-3">{t("service.description")}</h3>
-                <p className="text-gray-300 leading-relaxed mb-4">{t(selectedProduct.descriptionKey)}</p>
+                <p className="text-gray-300 leading-relaxed mb-4 text-sm md:text-base">
+                  {t(selectedProduct.descriptionKey)}
+                </p>
 
                 <div className="space-y-4">
                   <div>
@@ -851,7 +857,7 @@ export default function SaybaArcLinktree() {
                 <div className="grid grid-cols-2 gap-4 text-sm">
                   <div>
                     <span className="text-gray-400">{t("price.from")}</span>
-                    <p className="text-orange-400 font-medium text-lg">
+                    <p className="text-orange-400 font-medium text-base md:text-lg">
                       {selectedProduct.details?.pricing || "Hubungi untuk quote"}
                     </p>
                   </div>
@@ -862,7 +868,7 @@ export default function SaybaArcLinktree() {
                 </div>
               </div>
 
-              <div className="flex justify-between items-center">
+              <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                 <div className="text-sm text-gray-400">
                   <p>{t("custom.quote")}</p>
                   <p>{t("contact.pricing")}</p>
@@ -874,15 +880,15 @@ export default function SaybaArcLinktree() {
                   rel="noopener noreferrer"
                   onClick={handleLinkClick}
                   onMouseEnter={playHover}
-                  className="bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white px-6 py-3 rounded-lg font-medium transition-all duration-200 flex items-center space-x-2"
+                  className="w-full md:w-auto bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 active:from-green-700 active:to-green-800 text-white px-6 py-4 md:py-3 rounded-lg font-medium transition-all duration-200 flex items-center justify-center space-x-2 touch-manipulation"
                 >
                   <MessageCircle className="h-5 w-5" />
                   <span>Pesan</span>
                 </a>
               </div>
 
-              {/* Modal Slide Indicators */}
-              <div className="flex justify-center space-x-2 mt-6">
+              {/* Modal Slide Indicators - Larger touch targets for mobile */}
+              <div className="flex justify-center space-x-3 md:space-x-2 mt-6">
                 {products.map((_, index) => (
                   <button
                     key={index}
@@ -892,8 +898,8 @@ export default function SaybaArcLinktree() {
                       playClick()
                     }}
                     onMouseEnter={playHover}
-                    className={`w-2 h-2 rounded-full transition-all duration-200 ${
-                      modalSlide === index ? "bg-orange-500" : "bg-gray-600 hover:bg-gray-500"
+                    className={`w-3 h-3 md:w-2 md:h-2 rounded-full transition-all duration-200 touch-manipulation ${
+                      modalSlide === index ? "bg-orange-500" : "bg-gray-600 hover:bg-gray-500 active:bg-gray-500"
                     }`}
                   />
                 ))}

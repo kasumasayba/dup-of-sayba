@@ -42,15 +42,15 @@ export function EnhancedLoadingScreen({ onLoadingComplete }: EnhancedLoadingScre
       initial={{ opacity: 1 }}
       animate={{ opacity: isComplete ? 0 : 1 }}
       transition={{ duration: 1, ease: "easeOut" }}
-      className="fixed inset-0 z-50 flex items-center justify-center bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 px-4"
     >
-      <div className="text-center space-y-8">
-        {/* Logo with subtle animation */}
+      <div className="text-center space-y-6 md:space-y-8 w-full max-w-md">
+        {/* Logo with subtle animation - Responsive sizing */}
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.6, ease: "easeOut" }}
-          className="w-32 h-32 mx-auto rounded-full border-2 border-orange-500/30 shadow-xl flex items-center justify-center overflow-hidden relative bg-gray-800/30 backdrop-blur-sm"
+          className="w-24 h-24 md:w-32 md:h-32 mx-auto rounded-full border-2 border-orange-500/30 shadow-xl flex items-center justify-center overflow-hidden relative bg-gray-800/30 backdrop-blur-sm"
         >
           <Image
             src="/sayba-square-logo.png"
@@ -61,21 +61,21 @@ export function EnhancedLoadingScreen({ onLoadingComplete }: EnhancedLoadingScre
           />
         </motion.div>
 
-        {/* Brand text with elegant typography */}
+        {/* Brand text with elegant typography - Responsive sizing */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3, duration: 0.6 }}
           className="space-y-3"
         >
-          <div className="relative h-16 flex items-center justify-center">
+          <div className="relative h-12 md:h-16 flex items-center justify-center">
             <motion.h1
               key={showAlternateText ? "alt-loading" : "main-loading"}
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
               transition={{ duration: 0.5 }}
-              className={`text-4xl font-light tracking-wider absolute ${
+              className={`text-3xl md:text-4xl font-light tracking-wider absolute ${
                 showAlternateText ? "text-orange-400" : "text-white"
               }`}
             >
@@ -84,19 +84,19 @@ export function EnhancedLoadingScreen({ onLoadingComplete }: EnhancedLoadingScre
           </div>
 
           <motion.div
-            className="w-24 h-px bg-gradient-to-r from-transparent via-orange-500 to-transparent mx-auto"
+            className="w-16 md:w-24 h-px bg-gradient-to-r from-transparent via-orange-500 to-transparent mx-auto"
             initial={{ scaleX: 0 }}
             animate={{ scaleX: 1 }}
             transition={{ delay: 0.8, duration: 0.8 }}
           />
         </motion.div>
 
-        {/* Simple progress bar */}
+        {/* Simple progress bar - Responsive sizing */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 1, duration: 0.6 }}
-          className="w-64 mx-auto"
+          className="w-full max-w-xs md:max-w-sm mx-auto"
         >
           <div className="w-full bg-gray-700/30 rounded-full h-1 overflow-hidden">
             <motion.div
