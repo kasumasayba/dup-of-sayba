@@ -1,16 +1,26 @@
 "use client"
-import { useState } from "react"
+import type React from "react"
+
 import Image from "next/image"
-import { Card, CardContent } from "@/components/ui/card"
-import { useAudioFeedback } from "@/hooks/useAudioFeedback"
+import { ChevronLeft, ChevronRight } from "lucide-react"
+import { motion, AnimatePresence } from "framer-motion"
 import { useLanguage } from "@/hooks/useLanguage"
-import { motion } from "framer-motion"
+import { useAudioFeedback } from "@/hooks/useAudioFeedback"
 
 interface Product {
   id: number
   titleKey: string
   subtitleKey: string
+  descriptionKey: string
+  icon: React.ReactNode
   image: string
+  bgColor: string
+  link: string
+  details?: {
+    features: string[]
+    pricing: string
+    delivery: string
+  }
 }
 
 interface ProductCarouselPagesProps {
@@ -28,218 +38,144 @@ export function ProductCarouselPages({
   onProductClick,
   isAutoPlaying,
 }: ProductCarouselPagesProps) {
-  const [isTransitioning, setIsTransitioning] = useState(false)
-  const { playSwipe, playHover, playClick } = useAudioFeedback()
   const { t } = useLanguage()
+  const { playClick, playSwipe, playHover } = useAudioFeedback()
 
   const nextSlide = () => {
-    if (isTransitioning) return
-    setIsTransitioning(true)
-    onSlideChange((currentSlide + 1) % products.length)
+    const next = (currentSlide + 1) % products.length
+    onSlideChange(next)
     playSwipe()
-    setTimeout(() => setIsTransitioning(false), 400)
   }
 
   const prevSlide = () => {
-    if (isTransitioning) return
-    setIsTransitioning(true)
-    onSlideChange((currentSlide - 1 + products.length) % products.length)
+    const prev = (currentSlide - 1 + products.length) % products.length
+    onSlideChange(prev)
     playSwipe()
-    setTimeout(() => setIsTransitioning(false), 400)
   }
 
   const goToSlide = (index: number) => {
-    if (isTransitioning || index === currentSlide) return
-    setIsTransitioning(true)
     onSlideChange(index)
     playClick()
-    setTimeout(() => setIsTransitioning(false), 400)
+  }
+
+  const handleProductClick = (product: Product) => {
+    onProductClick(product)
+    playClick()
   }
 
   return (
-    <div className="relative w-full max-w-full overflow-hidden">
-      {/* Desktop Layout */}
-      <div className="hidden lg:block">
-        <div className="relative overflow-hidden rounded-2xl">
+    <div className="relative">
+      {/* Main Carousel */}
+      <div className="relative overflow-hidden rounded-xl bg-gray-700/20 backdrop-blur-sm border border-gray-600/30">
+        <AnimatePresence mode="wait">
           <motion.div
-            className="flex transition-transform duration-400 ease-out"
-            style={{ transform: `translateX(-${currentSlide * 100}%)` }}
-            animate={{ x: `-${currentSlide * 100}%` }}
-            transition={{ duration: 0.4, ease: "easeOut" }}
+            key={currentSlide}
+            initial={{ opacity: 0, x: 300 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -300 }}
+            transition={{ duration: 0.4, ease: "easeInOut" }}
+            className="p-6 md:p-8"
           >
-            {products.map((product, index) => (
-              <div key={product.id} className="w-full flex-shrink-0 px-4">
-                <Card className="bg-gray-800/50 backdrop-blur-sm border-gray-700/50 hover:bg-gray-750/50 transition-all duration-500 hover:scale-[1.01] shadow-xl product-card-border cursor-pointer hover:shadow-2xl hover:shadow-orange-500/10">
-                  <motion.button
-                    whileHover={{ scale: 1.005 }}
-                    whileTap={{ scale: 0.995 }}
-                    onClick={() => onProductClick(product)}
-                    onMouseEnter={playHover}
-                    className="w-full group p-0 bg-transparent border-none"
-                    disabled={isTransitioning}
-                  >
-                    <CardContent className="p-8">
-                      <div className="flex items-center space-x-8">
-                        {/* Product Image - 1:1 Aspect Ratio */}
-                        <div className="w-80 h-80 rounded-2xl overflow-hidden shadow-2xl transition-all duration-500 relative">
-                          <Image
-                            src={product.image || "/placeholder.svg"}
-                            alt={t(product.titleKey)}
-                            width={320}
-                            height={320}
-                            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                          />
-                        </div>
-
-                        {/* Product Info */}
-                        <div className="flex-1 text-left">
-                          <div className="bg-gray-700/50 backdrop-blur-sm rounded-xl p-6 h-full flex flex-col justify-center transition-all duration-300 group-hover:bg-gray-600/50">
-                            <h3 className="text-4xl font-bold text-white group-hover:text-orange-400 transition-colors duration-300 mb-4">
-                              {t(product.titleKey)}
-                            </h3>
-                            <p className="text-2xl text-orange-400 font-medium mb-6">{t(product.subtitleKey)}</p>
-                            <div className="bg-gray-600/50 rounded-lg p-4">
-                              <p className="text-gray-300 text-lg leading-relaxed">
-                                {t(`${product.titleKey.replace(/\./g, ".")}.description`)}
-                              </p>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </motion.button>
-                </Card>
+            <div className="flex flex-col lg:flex-row items-center space-y-6 lg:space-y-0 lg:space-x-8">
+              {/* Product Image */}
+              <div className="w-full lg:w-1/2 flex justify-center">
+                <div className="relative w-64 h-64 md:w-80 md:h-80 rounded-xl overflow-hidden border border-gray-600/30 shadow-lg">
+                  <Image
+                    src={products[currentSlide].image || "/placeholder.svg"}
+                    alt={t(products[currentSlide].titleKey)}
+                    fill
+                    className="object-cover"
+                  />
+                </div>
               </div>
-            ))}
+
+              {/* Product Info */}
+              <div className="w-full lg:w-1/2 text-center lg:text-left">
+                <div className={`inline-flex p-3 rounded-xl ${products[currentSlide].bgColor} mb-4`}>
+                  {products[currentSlide].icon}
+                </div>
+
+                <h3 className="text-2xl md:text-3xl font-bold text-white mb-3">{t(products[currentSlide].titleKey)}</h3>
+
+                <p className="text-orange-400 text-lg md:text-xl font-medium mb-4">
+                  {t(products[currentSlide].subtitleKey)}
+                </p>
+
+                <p className="text-gray-300 leading-relaxed mb-6 text-sm md:text-base">
+                  {t(products[currentSlide].descriptionKey)}
+                </p>
+
+                {/* Pricing Info */}
+                {products[currentSlide].details && (
+                  <div className="bg-gray-700/30 rounded-lg p-4 mb-6">
+                    <div className="flex justify-between items-center text-sm">
+                      <div>
+                        <span className="text-gray-400">Mulai dari</span>
+                        <p className="text-orange-400 font-bold text-lg">{products[currentSlide].details.pricing}</p>
+                      </div>
+                      <div className="text-right">
+                        <span className="text-gray-400">Pengerjaan</span>
+                        <p className="text-white font-medium">{products[currentSlide].details.delivery}</p>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                <button
+                  onClick={() => handleProductClick(products[currentSlide])}
+                  onMouseEnter={playHover}
+                  className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white px-8 py-3 rounded-lg font-medium transition-all duration-300 hover:shadow-lg hover:shadow-orange-500/25 hover:scale-105 active:scale-95 hover:-translate-y-0.5 touch-manipulation"
+                >
+                  Lihat Detail
+                </button>
+              </div>
+            </div>
           </motion.div>
+        </AnimatePresence>
 
-          {/* Desktop Navigation Buttons */}
-          <div className="absolute left-4 top-1/2 transform -translate-y-1/2 z-10">
-            <motion.button
-              onClick={prevSlide}
-              onMouseEnter={playHover}
-              disabled={isTransitioning}
-              whileHover={{ scale: 1.1, x: -2 }}
-              whileTap={{ scale: 0.9 }}
-              className="w-14 h-14 bg-gray-900/90 backdrop-blur-sm border-2 border-gray-600 text-white hover:bg-orange-500/20 hover:border-orange-500 hover:text-orange-400 transition-all duration-300 rounded-full disabled:opacity-50 shadow-xl"
-            >
-              <svg className="h-7 w-7 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-              </svg>
-            </motion.button>
-          </div>
+        {/* Navigation Arrows */}
+        <button
+          onClick={prevSlide}
+          onMouseEnter={playHover}
+          className="absolute left-4 top-1/2 transform -translate-y-1/2 w-12 h-12 bg-gray-900/90 backdrop-blur-sm border border-gray-600 text-white hover:border-orange-500 hover:text-orange-400 transition-all duration-300 rounded-full hover:shadow-lg hover:shadow-orange-500/25 hover:scale-105 active:scale-95 touch-manipulation"
+        >
+          <ChevronLeft className="h-6 w-6 mx-auto" />
+        </button>
 
-          <div className="absolute right-4 top-1/2 transform -translate-y-1/2 z-10">
-            <motion.button
-              onClick={nextSlide}
-              onMouseEnter={playHover}
-              disabled={isTransitioning}
-              whileHover={{ scale: 1.1, x: 2 }}
-              whileTap={{ scale: 0.9 }}
-              className="w-14 h-14 bg-gray-900/90 backdrop-blur-sm border-2 border-gray-600 text-white hover:bg-orange-500/20 hover:border-orange-500 hover:text-orange-400 transition-all duration-300 rounded-full disabled:opacity-50 shadow-xl"
-            >
-              <svg className="h-7 w-7 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-              </svg>
-            </motion.button>
-          </div>
-        </div>
+        <button
+          onClick={nextSlide}
+          onMouseEnter={playHover}
+          className="absolute right-4 top-1/2 transform -translate-y-1/2 w-12 h-12 bg-gray-900/90 backdrop-blur-sm border border-gray-600 text-white hover:border-orange-500 hover:text-orange-400 transition-all duration-300 rounded-full hover:shadow-lg hover:shadow-orange-500/25 hover:scale-105 active:scale-95 touch-manipulation"
+        >
+          <ChevronRight className="h-6 w-6 mx-auto" />
+        </button>
       </div>
 
-      {/* Mobile Layout */}
-      <div className="lg:hidden w-full max-w-full">
-        <div className="relative overflow-hidden rounded-xl">
-          <motion.div
-            className="flex transition-transform duration-400 ease-out"
-            style={{ transform: `translateX(-${currentSlide * 100}%)` }}
-            animate={{ x: `-${currentSlide * 100}%` }}
-            transition={{ duration: 0.4, ease: "easeOut" }}
-          >
-            {products.map((product, index) => (
-              <div key={product.id} className="w-full flex-shrink-0 px-1">
-                <Card className="bg-gray-800/50 backdrop-blur-sm border-gray-700/50 hover:bg-gray-750/50 transition-all duration-500 shadow-lg mobile-product-card-border cursor-pointer hover:shadow-xl">
-                  <motion.button
-                    whileHover={{ scale: 1.01 }}
-                    whileTap={{ scale: 0.99 }}
-                    onClick={() => onProductClick(product)}
-                    className="w-full group p-0 bg-transparent border-none min-h-[60px] touch-manipulation"
-                    disabled={isTransitioning}
-                  >
-                    <CardContent className="p-3">
-                      {/* Mobile Product Image - 1:1 Aspect Ratio */}
-                      <div className="w-full aspect-square rounded-xl overflow-hidden shadow-lg mb-3 transition-all duration-500 relative">
-                        <Image
-                          src={product.image || "/placeholder.svg"}
-                          alt={t(product.titleKey)}
-                          width={300}
-                          height={300}
-                          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                        />
-                      </div>
-
-                      {/* Mobile Product Info - Centered */}
-                      <div className="bg-gray-700/50 backdrop-blur-sm rounded-lg p-4 text-center transition-all duration-300 group-hover:bg-gray-600/50">
-                        <h3 className="text-lg font-bold text-white group-hover:text-orange-400 transition-colors duration-300 mb-1">
-                          {t(product.titleKey)}
-                        </h3>
-                        <p className="text-sm text-orange-400 font-medium">{t(product.subtitleKey)}</p>
-                      </div>
-                    </CardContent>
-                  </motion.button>
-                </Card>
-              </div>
-            ))}
-          </motion.div>
-
-          {/* Mobile Navigation Buttons */}
-          <div className="absolute left-1 top-1/2 transform -translate-y-1/2 z-10">
-            <motion.button
-              onClick={prevSlide}
-              disabled={isTransitioning}
-              whileHover={{ scale: 1.1, x: -1 }}
-              whileTap={{ scale: 0.9 }}
-              className="w-10 h-10 bg-gray-900/90 backdrop-blur-sm border border-gray-600 text-white hover:bg-orange-500/20 hover:border-orange-500 hover:text-orange-400 transition-all duration-300 rounded-full disabled:opacity-50 shadow-lg min-h-[40px] min-w-[40px] touch-manipulation"
-            >
-              <svg className="h-4 w-4 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-              </svg>
-            </motion.button>
-          </div>
-
-          <div className="absolute right-1 top-1/2 transform -translate-y-1/2 z-10">
-            <motion.button
-              onClick={nextSlide}
-              disabled={isTransitioning}
-              whileHover={{ scale: 1.1, x: 1 }}
-              whileTap={{ scale: 0.9 }}
-              className="w-10 h-10 bg-gray-900/90 backdrop-blur-sm border border-gray-600 text-white hover:bg-orange-500/20 hover:border-orange-500 hover:text-orange-400 transition-all duration-300 rounded-full disabled:opacity-50 shadow-lg min-h-[40px] min-w-[40px] touch-manipulation"
-            >
-              <svg className="h-4 w-4 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-              </svg>
-            </motion.button>
-          </div>
-        </div>
-      </div>
-
-      {/* Slide Indicators - Much Smaller without shadows */}
-      <div className="flex justify-center space-x-1.5 mt-6">
+      {/* Slide Indicators */}
+      <div className="flex justify-center space-x-3 mt-6">
         {products.map((_, index) => (
-          <motion.button
+          <button
             key={index}
             onClick={() => goToSlide(index)}
             onMouseEnter={playHover}
-            disabled={isTransitioning}
-            whileHover={{ scale: 1.5 }}
-            whileTap={{ scale: 0.8 }}
-            className={`w-1.5 h-1.5 rounded-full transition-all duration-300 min-h-[24px] min-w-[24px] flex items-center justify-center touch-manipulation ${
-              currentSlide === index ? "bg-orange-500" : "bg-gray-600 hover:bg-gray-500"
+            className={`w-3 h-3 rounded-full transition-all duration-300 touch-manipulation hover:scale-125 ${
+              currentSlide === index
+                ? "bg-orange-500 shadow-lg shadow-orange-500/50"
+                : "bg-gray-600 hover:bg-gray-500 hover:shadow-md hover:shadow-gray-500/25"
             }`}
-          >
-            <div className={`w-1.5 h-1.5 rounded-full ${currentSlide === index ? "bg-orange-500" : "bg-gray-600"}`} />
-          </motion.button>
+          />
         ))}
       </div>
+
+      {/* Auto-play indicator */}
+      {isAutoPlaying && (
+        <div className="absolute top-4 right-4 bg-gray-900/90 backdrop-blur-sm px-3 py-1 rounded-full">
+          <div className="flex items-center space-x-2">
+            <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+            <span className="text-xs text-gray-300">Auto</span>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
