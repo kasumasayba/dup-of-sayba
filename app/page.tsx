@@ -485,7 +485,7 @@ export default function SaybaArcLinktree() {
                   className="w-full h-full object-cover"
                 />
               </motion.div>
-              <h1 className="text-xl font-bold text-white">{t("sayba.arc")}</h1>
+              <h1 className="text-xl font-bold text-white">Art You Believe</h1>
             </div>
             <div className="flex items-center space-x-3">
               <SearchBar onSearch={handleSearch} onProductSelect={handleProductSelect} products={products} />
@@ -520,7 +520,7 @@ export default function SaybaArcLinktree() {
                   className="w-full h-full object-cover"
                 />
               </motion.div>
-              <h1 className="text-lg font-bold text-white">{t("sayba.arc")}</h1>
+              <h1 className="text-lg font-bold text-white">Art You Believe</h1>
             </div>
             <div className="flex items-center space-x-2">
               <SearchBar onSearch={handleSearch} onProductSelect={handleProductSelect} products={products} />
@@ -608,14 +608,16 @@ export default function SaybaArcLinktree() {
           {/* Desktop Layout */}
           <div className="hidden lg:block">
             <div className="max-w-7xl mx-auto">
-              {/* Hero Section - Full circular logo */}
+              {/* Hero Section - Full circular logo with hover effects */}
               <AnimatedSection className="text-center mb-16">
                 <div className="mb-12">
                   <motion.div
                     initial={{ opacity: 0, scale: 0.8 }}
                     animate={{ opacity: 1, scale: 1 }}
+                    whileHover={{ scale: 1.05, rotate: -5 }}
+                    whileTap={{ scale: 0.95 }}
                     transition={{ duration: 0.8, ease: "easeOut" }}
-                    className="w-40 h-40 mx-auto rounded-full border-2 border-orange-500/30 shadow-2xl flex items-center justify-center overflow-hidden relative bg-gray-800/50 backdrop-blur-sm"
+                    className="w-40 h-40 mx-auto rounded-full border-2 border-orange-500/30 shadow-2xl flex items-center justify-center overflow-hidden relative bg-gray-800/50 backdrop-blur-sm transition-all duration-300 hover:border-orange-500 hover:shadow-lg hover:shadow-orange-500/20 cursor-pointer"
                   >
                     <Image
                       src="/sayba-square-logo.png"
@@ -632,11 +634,20 @@ export default function SaybaArcLinktree() {
                   transition={{ delay: 0.3, duration: 0.6 }}
                   className="space-y-6"
                 >
-                  <h1 className="text-5xl font-light text-white tracking-wide">{t("sayba.arc")}</h1>
-                  <p className="text-2xl text-orange-400 font-light tracking-wider">{t("art.you.believe")}</p>
+                  <h1 className="text-5xl font-bold text-white tracking-wide">
+                    <span className="font-light">Sayba</span>{" "}
+                    <span className="font-bold bg-gradient-to-r from-orange-400 to-orange-600 bg-clip-text text-transparent">
+                      Arc
+                    </span>
+                  </h1>
                   <div className="w-24 h-px bg-gradient-to-r from-transparent via-orange-500 to-transparent mx-auto"></div>
-                  <p className="text-gray-400 max-w-2xl mx-auto leading-relaxed text-lg font-light">
-                    {t("hero.description")}
+                  <p className="text-gray-400 max-w-3xl mx-auto leading-relaxed text-lg font-light">
+                    Sayba Arc adalah platform kreatif terdepan yang menghadirkan solusi digital inovatif untuk bisnis
+                    dan individu. Kami menyediakan layanan desain grafis profesional, pengembangan website modern,
+                    aplikasi mobile, jasa penyelesaian tugas akademik, dan berbagai layanan teknologi lainnya. Dengan
+                    tim ahli berpengalaman dan komitmen terhadap kualitas, Sayba Arc membantu mewujudkan visi kreatif
+                    Anda menjadi kenyataan. Bergabunglah dengan ribuan klien yang telah mempercayai kami untuk
+                    mengembangkan proyek mereka dengan standar internasional dan harga yang kompetitif.
                   </p>
                 </motion.div>
               </AnimatedSection>
@@ -706,14 +717,16 @@ export default function SaybaArcLinktree() {
 
           {/* Mobile Layout */}
           <div className="lg:hidden w-full max-w-sm mx-auto">
-            {/* Mobile Hero - Full circular logo */}
+            {/* Mobile Hero - Full circular logo with hover effects */}
             <AnimatedSection className="text-center mb-12">
               <div className="mb-8">
                 <motion.div
                   initial={{ opacity: 0, scale: 0.8 }}
                   animate={{ opacity: 1, scale: 1 }}
+                  whileHover={{ scale: 1.05, rotate: -5 }}
+                  whileTap={{ scale: 0.95 }}
                   transition={{ duration: 0.8, ease: "easeOut" }}
-                  className="w-28 h-28 mx-auto rounded-full border-2 border-orange-500/30 shadow-2xl flex items-center justify-center overflow-hidden relative bg-gray-800/50 backdrop-blur-sm"
+                  className="w-28 h-28 mx-auto rounded-full border-2 border-orange-500/30 shadow-2xl flex items-center justify-center overflow-hidden relative bg-gray-800/50 backdrop-blur-sm transition-all duration-300 hover:border-orange-500 hover:shadow-lg hover:shadow-orange-500/20 cursor-pointer"
                 >
                   <Image
                     src="/sayba-square-logo.png"
@@ -730,10 +743,18 @@ export default function SaybaArcLinktree() {
                 transition={{ delay: 0.3, duration: 0.6 }}
                 className="space-y-4"
               >
-                <h1 className="text-3xl font-light text-white tracking-wide">{t("sayba.arc")}</h1>
-                <p className="text-lg text-orange-400 font-light tracking-wider">{t("art.you.believe")}</p>
+                <h1 className="text-3xl font-bold text-white tracking-wide">
+                  <span className="font-light">Sayba</span>{" "}
+                  <span className="font-bold bg-gradient-to-r from-orange-400 to-orange-600 bg-clip-text text-transparent">
+                    Arc
+                  </span>
+                </h1>
                 <div className="w-16 h-px bg-gradient-to-r from-transparent via-orange-500 to-transparent mx-auto"></div>
-                <p className="text-gray-400 text-sm leading-relaxed font-light px-4">{t("hero.mobile.description")}</p>
+                <p className="text-gray-400 text-sm leading-relaxed font-light px-4">
+                  Platform kreatif terdepan yang menghadirkan solusi digital inovatif. Kami menyediakan layanan desain
+                  grafis, pengembangan website, aplikasi mobile, dan berbagai layanan teknologi lainnya dengan standar
+                  profesional dan harga kompetitif untuk membantu mewujudkan visi kreatif Anda.
+                </p>
               </motion.div>
             </AnimatedSection>
 
