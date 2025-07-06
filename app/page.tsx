@@ -836,4 +836,69 @@ export default function SaybaArcLinktree() {
               {/* Product Info */}
               <div className="text-left mb-6">
                 <h3 className="text-lg font-medium text-white mb-3">{t("service.description")}</h3>
-                <p className="text-gray-300 \
+                <p className="text-gray-300 leading-relaxed text-sm md:text-base">
+                  {t(selectedProduct.descriptionKey)}
+                </p>
+              </div>
+
+              {/* Features */}
+              {selectedProduct.details && (
+                <div className="mb-6">
+                  <h4 className="text-lg font-medium text-white mb-3">{t("features.included")}</h4>
+                  <div className="grid gap-2">
+                    {selectedProduct.details.features.map((feature, index) => (
+                      <div key={index} className="flex items-start space-x-3">
+                        <div className="w-2 h-2 bg-orange-500 rounded-full mt-2 flex-shrink-0 shadow-sm shadow-orange-500/50"></div>
+                        <p className="text-gray-300 text-sm">{feature}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Pricing */}
+              {selectedProduct.details && (
+                <div className="bg-gray-700/30 rounded-lg p-4 mb-6 border border-gray-600/30">
+                  <div className="flex justify-between items-center">
+                    <div>
+                      <span className="text-gray-400 text-sm">{t("starting.from")}</span>
+                      <p className="text-orange-400 font-bold text-xl">{selectedProduct.details.pricing}</p>
+                    </div>
+                    <div className="text-right">
+                      <span className="text-gray-400 text-sm">{t("delivery.time")}</span>
+                      <p className="text-white font-medium">{selectedProduct.details.delivery}</p>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Action Buttons - Enhanced with glow */}
+              <div className="flex flex-col sm:flex-row gap-3">
+                <a
+                  href="https://wa.me/6287721916495"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={handleLinkClick}
+                  onMouseEnter={playHover}
+                  className="flex-1 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 active:from-green-600 active:to-green-700 text-white px-6 py-3 rounded-lg font-medium transition-all duration-300 text-center touch-manipulation hover:shadow-lg hover:shadow-green-500/25 hover:scale-105 active:scale-95 hover:-translate-y-0.5"
+                >
+                  {t("order.now")}
+                </a>
+                <a
+                  href="https://wa.me/6287721916495"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={handleLinkClick}
+                  onMouseEnter={playHover}
+                  className="flex-1 bg-gray-700 hover:bg-gray-600 active:bg-gray-600 text-white px-6 py-3 rounded-lg font-medium transition-all duration-300 text-center border border-gray-600 hover:border-gray-500 active:border-gray-500 touch-manipulation hover:shadow-lg hover:shadow-gray-500/25 hover:scale-105 active:scale-95 hover:-translate-y-0.5"
+                >
+                  {t("ask.question")}
+                </a>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+      )}
+    </div>
+  )
+}
