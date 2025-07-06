@@ -63,4 +63,29 @@ export function EnhancedLoadingScreen({ onLoadingComplete }: EnhancedLoadingScre
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.6, duration: 0.4 }}
-          className="w-64\
+          className="w-64 mx-auto"
+        >
+          <div className="w-full bg-gray-700/50 rounded-full h-1 mb-4">
+            <motion.div
+              className="bg-gradient-to-r from-orange-500 to-orange-600 h-1 rounded-full"
+              initial={{ width: 0 }}
+              animate={{ width: `${progress}%` }}
+              transition={{ duration: 0.1 }}
+            />
+          </div>
+          <p className="text-gray-400 text-sm font-light">{progress}%</p>
+        </motion.div>
+
+        {/* Loading Text */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.8, duration: 0.4 }}
+          className="mt-6"
+        >
+          <p className="text-gray-500 text-sm font-light">Loading your creative experience...</p>
+        </motion.div>
+      </div>
+    </div>
+  )
+}
