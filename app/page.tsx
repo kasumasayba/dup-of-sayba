@@ -244,35 +244,35 @@ const socialLinks = [
   },
 ]
 
-// Animation variants - Enhanced for professional smoothness
+// Animation variants - Simplified for post-intro
 const fadeInUp = {
-  initial: { opacity: 0, y: 30 },
+  initial: { opacity: 0, y: 20 },
   animate: { opacity: 1, y: 0 },
-  transition: { duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] },
+  transition: { duration: 0.4, ease: "easeOut" },
 }
 
 const fadeInLeft = {
-  initial: { opacity: 0, x: -30 },
+  initial: { opacity: 0, x: -20 },
   animate: { opacity: 1, x: 0 },
-  transition: { duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] },
+  transition: { duration: 0.4, ease: "easeOut" },
 }
 
 const fadeInRight = {
-  initial: { opacity: 0, x: 30 },
+  initial: { opacity: 0, x: 20 },
   animate: { opacity: 1, x: 0 },
-  transition: { duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] },
+  transition: { duration: 0.4, ease: "easeOut" },
 }
 
 const fadeIn = {
   initial: { opacity: 0 },
   animate: { opacity: 1 },
-  transition: { duration: 0.8, ease: [0.25, 0.46, 0.45, 0.94] },
+  transition: { duration: 0.4, ease: "easeOut" },
 }
 
 const staggerContainer = {
   animate: {
     transition: {
-      staggerChildren: 0.15,
+      staggerChildren: 0.1,
     },
   },
 }
@@ -280,8 +280,7 @@ const staggerContainer = {
 const scaleOnHover = {
   whileHover: {
     scale: 1.01,
-    y: -1,
-    transition: { duration: 0.2, ease: [0.25, 0.46, 0.45, 0.94] },
+    transition: { duration: 0.2, ease: "easeOut" },
   },
   whileTap: {
     scale: 0.99,
@@ -326,7 +325,6 @@ export default function SaybaArcLinktree() {
   const [isAutoPlaying, setIsAutoPlaying] = useState(true)
   const [isLoading, setIsLoading] = useState(true)
   const [showContent, setShowContent] = useState(false)
-  const [showAlternateText, setShowAlternateText] = useState(false)
 
   // Hooks
   const { audioEnabled, toggleAudio, playClick, playSwipe, playModal, playHover, playSuccess } = useAudioFeedback()
@@ -390,13 +388,6 @@ export default function SaybaArcLinktree() {
       return () => clearTimeout(timer)
     }
   }, [isLoading])
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setShowAlternateText((prev) => !prev)
-    }, 5000)
-    return () => clearInterval(interval)
-  }, [])
 
   const nextModalSlide = () => {
     const nextIndex = (modalSlide + 1) % products.length
@@ -641,34 +632,17 @@ export default function SaybaArcLinktree() {
                   transition={{ delay: 0.3, duration: 0.6 }}
                   className="space-y-6"
                 >
-                  <div className="relative h-16 flex items-center justify-center">
-                    <motion.h1
-                      key={showAlternateText ? "alt" : "main"}
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -10 }}
-                      transition={{ duration: 0.5 }}
-                      className={`text-5xl font-bold tracking-wide absolute bg-gradient-to-r ${
-                        showAlternateText
-                          ? "from-orange-400 via-orange-500 to-orange-600 bg-clip-text text-transparent drop-shadow-lg"
-                          : "from-white via-gray-100 to-gray-200 bg-clip-text text-transparent drop-shadow-lg"
-                      }`}
-                      style={{
-                        textShadow: showAlternateText
-                          ? "0 0 20px rgba(249, 115, 22, 0.3)"
-                          : "0 0 20px rgba(255, 255, 255, 0.1)",
-                      }}
-                    >
-                      {showAlternateText ? t("art.you.believe") : t("sayba.arc")}
-                    </motion.h1>
-                  </div>
+                  <h1 className="text-6xl font-bold text-white tracking-wide">Sayba Arc</h1>
+                  <p className="text-2xl text-gray-400 font-light tracking-wider">Art You Believe</p>
                   <div className="w-24 h-px bg-gradient-to-r from-transparent via-orange-500 to-transparent mx-auto"></div>
-                  <p className="text-gray-400 max-w-3xl mx-auto leading-relaxed text-lg font-light">
-                    Sayba Arc adalah penyedia layanan digital dan solusi kreatif terpercaya. Dengan motto 'Art You
-                    Believe', kami menghadirkan berbagai layanan profesional mulai dari jasa tugas, web design, mobile
-                    apps, graphic design, hingga AutoCAD service dan ArcGIS Service. Wujudkan ide kreatif Anda bersama
-                    kami!
-                  </p>
+                  <div className="max-w-4xl mx-auto">
+                    <p className="text-gray-400 leading-relaxed text-lg font-light text-justify">
+                      Sayba Arc adalah penyedia layanan digital dan solusi kreatif terpercaya. Dengan motto 'Art You
+                      Believe', kami menghadirkan berbagai layanan profesional mulai dari jasa tugas, web design, mobile
+                      apps, graphic design, hingga AutoCAD service dan ArcGIS Service. Wujudkan ide kreatif Anda bersama
+                      kami!
+                    </p>
+                  </div>
                 </motion.div>
               </AnimatedSection>
 
@@ -762,29 +736,10 @@ export default function SaybaArcLinktree() {
                 transition={{ delay: 0.3, duration: 0.6 }}
                 className="space-y-4"
               >
-                <div className="relative h-12 flex items-center justify-center">
-                  <motion.h1
-                    key={showAlternateText ? "alt-mobile" : "main-mobile"}
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -10 }}
-                    transition={{ duration: 0.5 }}
-                    className={`text-3xl font-bold tracking-wide absolute bg-gradient-to-r ${
-                      showAlternateText
-                        ? "from-orange-400 via-orange-500 to-orange-600 bg-clip-text text-transparent drop-shadow-lg"
-                        : "from-white via-gray-100 to-gray-200 bg-clip-text text-transparent drop-shadow-lg"
-                    }`}
-                    style={{
-                      textShadow: showAlternateText
-                        ? "0 0 15px rgba(249, 115, 22, 0.3)"
-                        : "0 0 15px rgba(255, 255, 255, 0.1)",
-                    }}
-                  >
-                    {showAlternateText ? t("art.you.believe") : t("sayba.arc")}
-                  </motion.h1>
-                </div>
+                <h1 className="text-4xl font-bold text-white tracking-wide">Sayba Arc</h1>
+                <p className="text-lg text-gray-400 font-light tracking-wider">Art You Believe</p>
                 <div className="w-16 h-px bg-gradient-to-r from-transparent via-orange-500 to-transparent mx-auto"></div>
-                <p className="text-gray-400 text-sm leading-relaxed font-light px-4">
+                <p className="text-gray-400 text-sm leading-relaxed font-light px-4 text-justify">
                   Sayba Arc adalah penyedia layanan digital dan solusi kreatif terpercaya. Dengan motto 'Art You
                   Believe', kami menghadirkan berbagai layanan profesional mulai dari jasa tugas, web design, mobile
                   apps, graphic design, hingga AutoCAD service dan ArcGIS Service. Wujudkan ide kreatif Anda bersama
