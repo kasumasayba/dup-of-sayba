@@ -70,42 +70,30 @@ export function SearchBar({ onSearch, onProductSelect, products }: SearchBarProp
   return (
     <div className="relative">
       {/* Search Toggle Button */}
-      <motion.button
+      <button
         onClick={handleToggle}
         onMouseEnter={playHover}
-        whileHover={{
-          scale: 1.05,
-          backgroundColor: "rgba(249, 115, 22, 0.1)",
-          borderColor: "rgba(249, 115, 22, 0.3)",
-        }}
-        whileTap={{ scale: 0.95 }}
-        className="w-10 h-10 rounded-lg border-2 border-gray-600 bg-gray-800/50 backdrop-blur-sm flex items-center justify-center text-gray-400 hover:text-orange-400 transition-all duration-300 hover:shadow-lg hover:shadow-orange-500/20"
+        className="w-10 h-10 rounded-lg border border-gray-600 bg-gray-800/50 backdrop-blur-sm flex items-center justify-center text-gray-400 hover:text-orange-400 transition-colors duration-200 hover:border-orange-500/50"
       >
         <Search className="h-5 w-5" />
-      </motion.button>
+      </button>
 
       {/* Search Overlay */}
       <AnimatePresence>
         {isOpen && (
           <>
             {/* Backdrop */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40"
-              onClick={handleToggle}
-            />
+            <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40" onClick={handleToggle} />
 
-            {/* Search Modal */}
+            {/* Centered Search Modal */}
             <motion.div
-              initial={{ opacity: 0, scale: 0.9, y: -20 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.9, y: -20 }}
-              transition={{ type: "spring", damping: 25, stiffness: 300 }}
-              className="fixed top-20 left-1/2 transform -translate-x-1/2 w-full max-w-md mx-4 bg-gray-800/95 backdrop-blur-sm rounded-2xl border border-gray-700/50 shadow-2xl z-50"
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              transition={{ duration: 0.2, ease: "easeOut" }}
+              className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full max-w-lg mx-4 bg-gray-800/95 backdrop-blur-sm rounded-xl border border-gray-700/50 shadow-2xl z-50"
             >
-              <div className="p-4">
+              <div className="p-6">
                 {/* Search Input */}
                 <form onSubmit={handleSearch} className="relative mb-4">
                   <input
@@ -114,12 +102,12 @@ export function SearchBar({ onSearch, onProductSelect, products }: SearchBarProp
                     value={query}
                     onChange={(e) => setQuery(e.target.value)}
                     placeholder={t("search.placeholder") || "Search products..."}
-                    className="w-full px-4 py-3 pr-12 bg-gray-700/50 border border-gray-600 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all duration-300"
+                    className="w-full px-4 py-3 pr-12 bg-gray-700/50 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-orange-500 focus:border-orange-500 transition-all duration-200"
                   />
                   <button
                     type="button"
                     onClick={handleToggle}
-                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-white transition-colors duration-300"
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-white transition-colors duration-200"
                   >
                     <X className="h-5 w-5" />
                   </button>
@@ -128,25 +116,23 @@ export function SearchBar({ onSearch, onProductSelect, products }: SearchBarProp
                 {/* Search Results */}
                 {filteredProducts.length > 0 && (
                   <div className="space-y-2 max-h-60 overflow-y-auto">
-                    <p className="text-sm text-gray-400 px-2 mb-2">
+                    <p className="text-sm text-gray-400 px-2 mb-3">
                       {filteredProducts.length} {t("results.found") || "results found"}
                     </p>
                     {filteredProducts.map((product) => (
-                      <motion.button
+                      <button
                         key={product.id}
                         onClick={() => handleProductClick(product.id)}
                         onMouseEnter={playHover}
-                        whileHover={{ scale: 1.02, x: 5 }}
-                        whileTap={{ scale: 0.98 }}
-                        className="w-full text-left p-3 rounded-lg bg-gray-700/30 hover:bg-gray-700/50 border border-gray-600/30 hover:border-orange-500/30 transition-all duration-300 group"
+                        className="w-full text-left p-3 rounded-lg bg-gray-700/30 hover:bg-gray-700/50 border border-gray-600/30 hover:border-orange-500/30 transition-all duration-200 group"
                       >
-                        <h4 className="text-white font-medium group-hover:text-orange-400 transition-colors duration-300">
+                        <h4 className="text-white font-medium group-hover:text-orange-400 transition-colors duration-200">
                           {t(product.titleKey)}
                         </h4>
-                        <p className="text-gray-400 text-sm mt-1 group-hover:text-gray-300 transition-colors duration-300">
+                        <p className="text-gray-400 text-sm mt-1 group-hover:text-gray-300 transition-colors duration-200">
                           {t(product.subtitleKey)}
                         </p>
-                      </motion.button>
+                      </button>
                     ))}
                   </div>
                 )}
