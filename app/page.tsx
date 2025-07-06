@@ -2,6 +2,7 @@
 import Image from "next/image"
 import type React from "react"
 import { ChevronLeft, ChevronRight } from "lucide-react"
+import { motion, useInView } from "framer-motion"
 
 import { useState, useEffect, useRef } from "react"
 import {
@@ -244,6 +245,61 @@ const socialLinks = [
   },
 ]
 
+// Animation variants
+const fadeInUp = {
+  initial: { opacity: 0, y: 60 },
+  animate: { opacity: 1, y: 0 },
+  transition: { duration: 0.6, ease: "easeOut" },
+}
+
+const fadeInLeft = {
+  initial: { opacity: 0, x: -60 },
+  animate: { opacity: 1, x: 0 },
+  transition: { duration: 0.6, ease: "easeOut" },
+}
+
+const fadeInRight = {
+  initial: { opacity: 0, x: 60 },
+  animate: { opacity: 1, x: 0 },
+  transition: { duration: 0.6, ease: "easeOut" },
+}
+
+const staggerContainer = {
+  animate: {
+    transition: {
+      staggerChildren: 0.1,
+    },
+  },
+}
+
+const AnimatedSection = ({
+  children,
+  className = "",
+  variant = fadeInUp,
+  delay = 0,
+}: {
+  children: React.ReactNode
+  className?: string
+  variant?: any
+  delay?: number
+}) => {
+  const ref = useRef(null)
+  const isInView = useInView(ref, { once: true, margin: "-100px" })
+
+  return (
+    <motion.div
+      ref={ref}
+      initial="initial"
+      animate={isInView ? "animate" : "initial"}
+      variants={variant}
+      transition={{ ...variant.transition, delay }}
+      className={className}
+    >
+      {children}
+    </motion.div>
+  )
+}
+
 export default function SaybaArcLinktree() {
   const [currentSlide, setCurrentSlide] = useState(0)
   const [modalSlide, setModalSlide] = useState(0)
@@ -253,9 +309,6 @@ export default function SaybaArcLinktree() {
   const [isAutoPlaying, setIsAutoPlaying] = useState(true)
   const [isLoading, setIsLoading] = useState(true)
   const [showContent, setShowContent] = useState(false)
-
-  const modalTouchStartX = useRef<number>(0)
-  const modalTouchEndX = useRef<number>(0)
 
   // Hooks
   const { audioEnabled, toggleAudio, playClick, playSwipe, playModal, playHover, playSuccess } = useAudioFeedback()
@@ -334,30 +387,6 @@ export default function SaybaArcLinktree() {
     playSwipe()
   }
 
-  // Touch handlers for modal slider
-  const handleModalTouchStart = (e: React.TouchEvent) => {
-    modalTouchStartX.current = e.targetTouches[0].clientX
-  }
-
-  const handleModalTouchMove = (e: React.TouchEvent) => {
-    modalTouchEndX.current = e.targetTouches[0].clientX
-  }
-
-  const handleModalTouchEnd = () => {
-    if (!modalTouchStartX.current || !modalTouchEndX.current) return
-
-    const distance = modalTouchStartX.current - modalTouchEndX.current
-    const isLeftSwipe = distance > 50
-    const isRightSwipe = distance < -50
-
-    if (isLeftSwipe) {
-      nextModalSlide()
-    }
-    if (isRightSwipe) {
-      prevModalSlide()
-    }
-  }
-
   const openProductModal = (product: (typeof products)[0]) => {
     setSelectedProduct(product)
     setModalSlide(product.id - 1)
@@ -410,7 +439,12 @@ export default function SaybaArcLinktree() {
       )}
 
       {/* Desktop Navigation */}
-      <nav className="hidden lg:block fixed top-0 left-0 right-0 z-50 bg-gray-900/95 backdrop-blur-sm border-b border-gray-700">
+      <motion.nav
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6 }}
+        className="hidden lg:block fixed top-0 left-0 right-0 z-50 bg-gray-900/95 backdrop-blur-sm border-b border-gray-700"
+      >
         <div className="container mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
@@ -432,10 +466,15 @@ export default function SaybaArcLinktree() {
             </div>
           </div>
         </div>
-      </nav>
+      </motion.nav>
 
       {/* Mobile Navigation */}
-      <nav className="lg:hidden fixed top-0 left-0 right-0 z-50 bg-gray-900/95 backdrop-blur-sm border-b border-gray-700">
+      <motion.nav
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6 }}
+        className="lg:hidden fixed top-0 left-0 right-0 z-50 bg-gray-900/95 backdrop-blur-sm border-b border-gray-700"
+      >
         <div className="px-4 py-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
@@ -457,7 +496,7 @@ export default function SaybaArcLinktree() {
             </div>
           </div>
         </div>
-      </nav>
+      </motion.nav>
 
       {/* Floating Social Media Chat */}
       <div className="fixed bottom-6 right-6 z-50">
@@ -469,10 +508,15 @@ export default function SaybaArcLinktree() {
             }`}
           >
             {socialLinks.map((social, index) => (
-              <div
+              <motion.div
                 key={index}
-                className="flex items-center justify-end space-x-3 animate-slide-up"
-                style={{ animationDelay: `${index * 100}ms` }}
+                initial={{ opacity: 0, x: 20 }}
+                animate={{
+                  opacity: socialMenuOpen ? 1 : 0,
+                  x: socialMenuOpen ? 0 : 20,
+                }}
+                transition={{ delay: index * 0.1 }}
+                className="flex items-center justify-end space-x-3"
               >
                 <span className="bg-gray-800/90 backdrop-blur-sm text-white px-3 py-2 rounded-lg text-sm whitespace-nowrap border border-gray-600">
                   {social.label}
@@ -487,18 +531,20 @@ export default function SaybaArcLinktree() {
                 >
                   {social.icon}
                 </a>
-              </div>
+              </motion.div>
             ))}
           </div>
 
           {/* Main Chat Button */}
-          <button
+          <motion.button
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.95 }}
             onClick={handleSocialToggle}
             onMouseEnter={playHover}
-            className="w-16 h-16 bg-gradient-to-r from-orange-500 to-orange-600 rounded-full flex items-center justify-center text-white shadow-lg glow-hover interactive-scale"
+            className="w-16 h-16 bg-gradient-to-r from-orange-500 to-orange-600 rounded-full flex items-center justify-center text-white shadow-lg glow-hover"
           >
             {socialMenuOpen ? <X className="h-6 w-6" /> : <MessageSquare className="h-6 w-6" />}
-          </button>
+          </motion.button>
         </div>
       </div>
 
@@ -509,9 +555,14 @@ export default function SaybaArcLinktree() {
           <div className="hidden lg:block">
             <div className="max-w-7xl mx-auto">
               {/* Hero Section */}
-              <div className="text-center mb-12">
+              <AnimatedSection className="text-center mb-12">
                 <div className="mb-8">
-                  <div className="w-48 h-48 mx-auto rounded-full border-4 border-orange-500 shadow-2xl flex items-center justify-center overflow-hidden relative glow-hover interactive-scale">
+                  <motion.div
+                    initial={{ scale: 0, rotate: -180 }}
+                    animate={{ scale: 1, rotate: 0 }}
+                    transition={{ duration: 0.8, ease: "easeOut" }}
+                    className="w-48 h-48 mx-auto rounded-full border-4 border-orange-500 shadow-2xl flex items-center justify-center overflow-hidden relative glow-hover interactive-scale"
+                  >
                     <Image
                       src="/sayba-square-logo.png"
                       alt="Sayba Arc - Art You Believe"
@@ -519,18 +570,42 @@ export default function SaybaArcLinktree() {
                       height={192}
                       className="w-full h-full object-cover rounded-full"
                     />
-                  </div>
+                  </motion.div>
                 </div>
-                <h1 className="text-4xl font-bold text-white mb-4">{t("sayba.arc")}</h1>
-                <p className="text-xl text-gray-300 mb-4">{t("art.you.believe")}</p>
-                <p className="text-gray-400 max-w-2xl mx-auto leading-relaxed">{t("hero.description")}</p>
-              </div>
+                <motion.h1
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.3, duration: 0.6 }}
+                  className="text-4xl font-bold text-white mb-4"
+                >
+                  {t("sayba.arc")}
+                </motion.h1>
+                <motion.p
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.4, duration: 0.6 }}
+                  className="text-xl text-gray-300 mb-4"
+                >
+                  {t("art.you.believe")}
+                </motion.p>
+                <motion.p
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.5, duration: 0.6 }}
+                  className="text-gray-400 max-w-2xl mx-auto leading-relaxed"
+                >
+                  {t("hero.description")}
+                </motion.p>
+              </AnimatedSection>
 
               {/* Main Links Grid */}
-              <div className="grid md:grid-cols-2 gap-6 mb-12">
+              <AnimatedSection variant={staggerContainer} className="grid md:grid-cols-2 gap-6 mb-12">
                 {mainLinks.map((link, index) => (
-                  <a
+                  <motion.a
                     key={index}
+                    variants={fadeInUp}
+                    whileHover={{ scale: 1.02, y: -5 }}
+                    whileTap={{ scale: 0.98 }}
                     href={link.link}
                     target="_blank"
                     rel="noopener noreferrer"
@@ -538,7 +613,7 @@ export default function SaybaArcLinktree() {
                     onClick={handleLinkClick}
                     onMouseEnter={playHover}
                   >
-                    <Card className="bg-gray-800 border-gray-700 hover:bg-gray-750 transition-all duration-300 hover:scale-[1.02] hover:shadow-xl h-full glow-hover interactive-scale shadow-lg">
+                    <Card className="bg-gray-800 border-gray-700 hover:bg-gray-750 transition-all duration-300 h-full glow-hover shadow-lg">
                       <CardContent className="p-6">
                         <div className="flex items-center space-x-4">
                           <div
@@ -556,36 +631,43 @@ export default function SaybaArcLinktree() {
                         </div>
                       </CardContent>
                     </Card>
-                  </a>
+                  </motion.a>
                 ))}
-              </div>
+              </AnimatedSection>
 
               {/* Product Pages Carousel */}
-              <Card className="bg-gray-800 border-gray-700 mb-12 glow-hover shadow-xl">
-                <CardContent className="p-8">
-                  <div className="text-center mb-8">
-                    <h2 className="text-3xl font-semibold text-white mb-4">{t("explore.collection")}</h2>
-                    <p className="text-gray-400">{t("collection.subtitle")}</p>
-                  </div>
+              <AnimatedSection>
+                <Card className="bg-gray-800 border-gray-700 mb-12 glow-hover shadow-xl">
+                  <CardContent className="p-8">
+                    <div className="text-center mb-8">
+                      <h2 className="text-3xl font-semibold text-white mb-4">{t("explore.collection")}</h2>
+                      <p className="text-gray-400">{t("collection.subtitle")}</p>
+                    </div>
 
-                  <ProductCarouselPages
-                    products={products}
-                    currentSlide={currentSlide}
-                    onSlideChange={setCurrentSlide}
-                    onProductClick={openProductModal}
-                    isAutoPlaying={isAutoPlaying}
-                  />
-                </CardContent>
-              </Card>
+                    <ProductCarouselPages
+                      products={products}
+                      currentSlide={currentSlide}
+                      onSlideChange={setCurrentSlide}
+                      onProductClick={openProductModal}
+                      isAutoPlaying={isAutoPlaying}
+                    />
+                  </CardContent>
+                </Card>
+              </AnimatedSection>
             </div>
           </div>
 
           {/* Mobile Layout */}
           <div className="lg:hidden max-w-md mx-auto">
             {/* Mobile Hero */}
-            <div className="text-center mb-8">
+            <AnimatedSection className="text-center mb-8">
               <div className="mb-6">
-                <div className="w-32 h-32 mx-auto rounded-full border-3 border-orange-500 shadow-2xl flex items-center justify-center overflow-hidden relative glow-hover interactive-scale">
+                <motion.div
+                  initial={{ scale: 0, rotate: -180 }}
+                  animate={{ scale: 1, rotate: 0 }}
+                  transition={{ duration: 0.8, ease: "easeOut" }}
+                  className="w-32 h-32 mx-auto rounded-full border-3 border-orange-500 shadow-2xl flex items-center justify-center overflow-hidden relative glow-hover interactive-scale"
+                >
                   <Image
                     src="/sayba-square-logo.png"
                     alt="Sayba Arc - Art You Believe"
@@ -593,25 +675,49 @@ export default function SaybaArcLinktree() {
                     height={128}
                     className="w-full h-full object-cover rounded-full"
                   />
-                </div>
+                </motion.div>
               </div>
-              <h1 className="text-2xl font-bold text-white mb-2">{t("sayba.arc")}</h1>
-              <p className="text-gray-300 text-sm mb-4">{t("art.you.believe")}</p>
-              <p className="text-gray-400 text-xs leading-relaxed">{t("hero.mobile.description")}</p>
-            </div>
+              <motion.h1
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.3, duration: 0.6 }}
+                className="text-2xl font-bold text-white mb-2"
+              >
+                {t("sayba.arc")}
+              </motion.h1>
+              <motion.p
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.4, duration: 0.6 }}
+                className="text-gray-300 text-sm mb-4"
+              >
+                {t("art.you.believe")}
+              </motion.p>
+              <motion.p
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.5, duration: 0.6 }}
+                className="text-gray-400 text-xs leading-relaxed"
+              >
+                {t("hero.mobile.description")}
+              </motion.p>
+            </AnimatedSection>
 
             {/* Mobile Main Links */}
-            <div className="space-y-4 mb-8">
+            <AnimatedSection variant={staggerContainer} className="space-y-4 mb-8">
               {mainLinks.map((link, index) => (
-                <a
+                <motion.a
                   key={index}
+                  variants={fadeInUp}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
                   href={link.link}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="block group"
+                  className="block group min-h-[60px] touch-manipulation"
                   onClick={handleLinkClick}
                 >
-                  <Card className="bg-gray-800 border-gray-700 hover:bg-gray-750 transition-all duration-300 hover:scale-[1.02] glow-hover interactive-scale shadow-lg">
+                  <Card className="bg-gray-800 border-gray-700 hover:bg-gray-750 transition-all duration-300 glow-hover shadow-lg">
                     <CardContent className="p-4">
                       <div className="flex items-center space-x-4">
                         <div
@@ -629,167 +735,195 @@ export default function SaybaArcLinktree() {
                       </div>
                     </CardContent>
                   </Card>
-                </a>
+                </motion.a>
               ))}
-            </div>
+            </AnimatedSection>
 
             {/* Mobile Product Pages Carousel */}
-            <Card className="bg-gray-800 border-gray-700 mb-8 glow-hover shadow-lg">
-              <CardContent className="p-6">
-                <div className="text-center mb-6">
-                  <h2 className="text-xl font-semibold text-white mb-2">{t("explore.collection")}</h2>
-                  <p className="text-gray-400 text-sm">{t("collection.subtitle")}</p>
-                </div>
+            <AnimatedSection>
+              <Card className="bg-gray-800 border-gray-700 mb-8 glow-hover shadow-lg">
+                <CardContent className="p-6">
+                  <div className="text-center mb-6">
+                    <h2 className="text-xl font-semibold text-white mb-2">{t("explore.collection")}</h2>
+                    <p className="text-gray-400 text-sm">{t("collection.subtitle")}</p>
+                  </div>
 
-                <ProductCarouselPages
-                  products={products}
-                  currentSlide={currentSlide}
-                  onSlideChange={setCurrentSlide}
-                  onProductClick={openProductModal}
-                  isAutoPlaying={isAutoPlaying}
-                />
-              </CardContent>
-            </Card>
+                  <ProductCarouselPages
+                    products={products}
+                    currentSlide={currentSlide}
+                    onSlideChange={setCurrentSlide}
+                    onProductClick={openProductModal}
+                    isAutoPlaying={isAutoPlaying}
+                  />
+                </CardContent>
+              </Card>
+            </AnimatedSection>
           </div>
         </div>
       </div>
 
       {/* Footer */}
-      <footer className="bg-gray-900/95 border-t border-gray-700 py-8">
-        <div className="container mx-auto px-4 lg:px-8">
-          <div className="max-w-4xl mx-auto">
-            <div className="grid md:grid-cols-2 gap-8">
-              <Card className="bg-gray-800 border-gray-700 glow-hover shadow-lg">
-                <CardContent className="p-6">
-                  <h3 className="text-xl font-semibold text-white mb-4">{t("get.in.touch")}</h3>
-                  <div className="space-y-3">
-                    <a
-                      href="mailto:sayba.help@gmail.com"
-                      onClick={handleLinkClick}
-                      onMouseEnter={playHover}
-                      className="flex items-center space-x-3 text-gray-300 hover:text-orange-400 transition-colors glow-hover interactive-scale"
-                    >
-                      <Mail className="h-5 w-5" />
-                      <span className="text-sm">sayba.help@gmail.com</span>
-                    </a>
-                    <a
-                      href="tel:+6287721916495"
-                      onClick={handleLinkClick}
-                      onMouseEnter={playHover}
-                      className="flex items-center space-x-3 text-gray-300 hover:text-orange-400 transition-colors glow-hover interactive-scale"
-                    >
-                      <Phone className="h-5 w-5" />
-                      <span className="text-sm">+62 877-2191-6495</span>
-                    </a>
-                    <a
-                      href="https://www.sayba.shop"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      onClick={handleLinkClick}
-                      onMouseEnter={playHover}
-                      className="flex items-center space-x-3 text-gray-300 hover:text-orange-400 transition-colors glow-hover interactive-scale"
-                    >
-                      <Globe className="h-5 w-5" />
-                      <span className="text-sm">www.sayba.shop</span>
-                    </a>
-                  </div>
-                </CardContent>
-              </Card>
+      <AnimatedSection>
+        <footer className="bg-gray-900/95 border-t border-gray-700 py-8">
+          <div className="container mx-auto px-4 lg:px-8">
+            <div className="max-w-4xl mx-auto">
+              <motion.div
+                variants={staggerContainer}
+                initial="initial"
+                whileInView="animate"
+                viewport={{ once: true }}
+                className="grid md:grid-cols-2 gap-8"
+              >
+                <motion.div variants={fadeInLeft}>
+                  <Card className="bg-gray-800 border-gray-700 glow-hover shadow-lg">
+                    <CardContent className="p-6">
+                      <h3 className="text-xl font-semibold text-white mb-4">{t("get.in.touch")}</h3>
+                      <div className="space-y-3">
+                        <a
+                          href="mailto:sayba.help@gmail.com"
+                          onClick={handleLinkClick}
+                          onMouseEnter={playHover}
+                          className="flex items-center space-x-3 text-gray-300 hover:text-orange-400 transition-colors glow-hover interactive-scale"
+                        >
+                          <Mail className="h-5 w-5" />
+                          <span className="text-sm">sayba.help@gmail.com</span>
+                        </a>
+                        <a
+                          href="tel:+6287721916495"
+                          onClick={handleLinkClick}
+                          onMouseEnter={playHover}
+                          className="flex items-center space-x-3 text-gray-300 hover:text-orange-400 transition-colors glow-hover interactive-scale"
+                        >
+                          <Phone className="h-5 w-5" />
+                          <span className="text-sm">+62 877-2191-6495</span>
+                        </a>
+                        <a
+                          href="https://www.sayba.shop"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          onClick={handleLinkClick}
+                          onMouseEnter={playHover}
+                          className="flex items-center space-x-3 text-gray-300 hover:text-orange-400 transition-colors glow-hover interactive-scale"
+                        >
+                          <Globe className="h-5 w-5" />
+                          <span className="text-sm">www.sayba.shop</span>
+                        </a>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </motion.div>
 
-              <Card className="bg-gray-800 border-gray-700 glow-hover shadow-lg">
-                <CardContent className="p-6">
-                  <h3 className="text-xl font-semibold text-white mb-4">{t("why.choose.us")}</h3>
-                  <div className="space-y-3">
-                    <div className="flex items-start space-x-3">
-                      <div className="w-2 h-2 bg-orange-500 rounded-full mt-2"></div>
-                      <p className="text-gray-300 text-sm">{t("professional.quality")}</p>
-                    </div>
-                    <div className="flex items-start space-x-3">
-                      <div className="w-2 h-2 bg-orange-500 rounded-full mt-2"></div>
-                      <p className="text-gray-300 text-sm">{t("fast.turnaround")}</p>
-                    </div>
-                    <div className="flex items-start space-x-3">
-                      <div className="w-2 h-2 bg-orange-500 rounded-full mt-2"></div>
-                      <p className="text-gray-300 text-sm">{t("customer.support")}</p>
-                    </div>
-                    <div className="flex items-start space-x-3">
-                      <div className="w-2 h-2 bg-orange-500 rounded-full mt-2"></div>
-                      <p className="text-gray-300 text-sm">{t("competitive.pricing")}</p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
+                <motion.div variants={fadeInRight}>
+                  <Card className="bg-gray-800 border-gray-700 glow-hover shadow-lg">
+                    <CardContent className="p-6">
+                      <h3 className="text-xl font-semibold text-white mb-4">{t("why.choose.us")}</h3>
+                      <div className="space-y-3">
+                        <div className="flex items-start space-x-3">
+                          <div className="w-2 h-2 bg-orange-500 rounded-full mt-2"></div>
+                          <p className="text-gray-300 text-sm">{t("professional.quality")}</p>
+                        </div>
+                        <div className="flex items-start space-x-3">
+                          <div className="w-2 h-2 bg-orange-500 rounded-full mt-2"></div>
+                          <p className="text-gray-300 text-sm">{t("fast.turnaround")}</p>
+                        </div>
+                        <div className="flex items-start space-x-3">
+                          <div className="w-2 h-2 bg-orange-500 rounded-full mt-2"></div>
+                          <p className="text-gray-300 text-sm">{t("customer.support")}</p>
+                        </div>
+                        <div className="flex items-start space-x-3">
+                          <div className="w-2 h-2 bg-orange-500 rounded-full mt-2"></div>
+                          <p className="text-gray-300 text-sm">{t("competitive.pricing")}</p>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </motion.div>
+              </motion.div>
 
-            <div className="text-center text-gray-500 text-xs mt-8 pt-6 border-t border-gray-700">
-              <p>{t("copyright")}</p>
-              <p className="mt-1">{t("powered.by")}</p>
+              <motion.div
+                initial={{ opacity: 0 }}
+                whileInView={{ opacity: 1 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.5 }}
+                className="text-center text-gray-500 text-xs mt-8 pt-6 border-t border-gray-700"
+              >
+                <p>{t("copyright")}</p>
+                <p className="mt-1">{t("powered.by")}</p>
+              </motion.div>
             </div>
           </div>
-        </div>
-      </footer>
+        </footer>
+      </AnimatedSection>
 
-      {/* Enhanced Product Detail Modal with Swipe */}
+      {/* Enhanced Product Detail Modal - No Touch Gestures */}
       {isModalOpen && selectedProduct && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
-          <div className="bg-gray-800 rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-gray-700 shadow-2xl">
-            {/* Modal Header with Navigation */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm"
+        >
+          <motion.div
+            initial={{ scale: 0.9, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            exit={{ scale: 0.9, opacity: 0 }}
+            transition={{ type: "spring", damping: 25, stiffness: 300 }}
+            className="bg-gray-800 rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto border border-gray-700 shadow-2xl"
+          >
+            {/* Modal Header */}
             <div className="relative p-6 border-b border-gray-700">
               <button
                 onClick={closeModal}
                 onMouseEnter={playHover}
-                className="absolute top-4 right-4 text-gray-400 hover:text-white transition-colors glow-hover interactive-scale"
+                className="absolute top-4 right-4 text-gray-400 hover:text-white transition-colors glow-hover interactive-scale z-10"
               >
                 <X className="h-6 w-6" />
               </button>
 
-              <div className="flex items-center justify-between">
+              <div className="text-center">
+                <h2 className="text-2xl font-bold text-white mb-2">{t(selectedProduct.titleKey)}</h2>
+                <p className="text-orange-400 font-medium">{t(selectedProduct.subtitleKey)}</p>
+              </div>
+            </div>
+
+            {/* Modal Content */}
+            <div className="p-6">
+              {/* Product Image - 1:1 Aspect Ratio */}
+              <div className="relative mb-6">
+                <div className="w-full max-w-md mx-auto aspect-square rounded-xl overflow-hidden shadow-lg">
+                  <Image
+                    src={selectedProduct.image || "/placeholder.svg"}
+                    alt={t(selectedProduct.titleKey)}
+                    width={400}
+                    height={400}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+
+                {/* Navigation Buttons - Centered on sides */}
                 <Button
                   variant="ghost"
                   size="icon"
                   onClick={prevModalSlide}
                   onMouseEnter={playHover}
-                  className="text-gray-400 hover:text-white glow-hover interactive-scale button-glow-bg"
+                  className="absolute left-4 top-1/2 transform -translate-y-1/2 w-12 h-12 bg-gray-900/90 backdrop-blur-sm border-2 border-gray-600 text-white hover:bg-orange-500/20 hover:border-orange-500 hover:text-orange-400 transition-all duration-300 rounded-full button-glow-bg shadow-xl z-10"
                 >
                   <ChevronLeft className="h-6 w-6" />
                 </Button>
-
-                <div className="flex items-center space-x-4">
-                  <div className="w-16 h-16 rounded-xl overflow-hidden shadow-lg">
-                    <Image
-                      src={selectedProduct.image || "/placeholder.svg"}
-                      alt={t(selectedProduct.titleKey)}
-                      width={64}
-                      height={64}
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                  <div className="text-center">
-                    <h2 className="text-2xl font-bold text-white">{t(selectedProduct.titleKey)}</h2>
-                    <p className="text-orange-400 font-medium">{t(selectedProduct.subtitleKey)}</p>
-                  </div>
-                </div>
 
                 <Button
                   variant="ghost"
                   size="icon"
                   onClick={nextModalSlide}
                   onMouseEnter={playHover}
-                  className="text-gray-400 hover:text-white glow-hover interactive-scale button-glow-bg"
+                  className="absolute right-4 top-1/2 transform -translate-y-1/2 w-12 h-12 bg-gray-900/90 backdrop-blur-sm border-2 border-gray-600 text-white hover:bg-orange-500/20 hover:border-orange-500 hover:text-orange-400 transition-all duration-300 rounded-full button-glow-bg shadow-xl z-10"
                 >
                   <ChevronRight className="h-6 w-6" />
                 </Button>
               </div>
-            </div>
 
-            {/* Modal Content with Touch Support */}
-            <div
-              className="p-6"
-              onTouchStart={handleModalTouchStart}
-              onTouchMove={handleModalTouchMove}
-              onTouchEnd={handleModalTouchEnd}
-            >
-              <div className="mb-6">
+              {/* Product Info - Centered below image */}
+              <div className="text-center mb-6">
                 <h3 className="text-lg font-semibold text-white mb-3">{t("service.description")}</h3>
                 <p className="text-gray-300 leading-relaxed mb-4">{t(selectedProduct.descriptionKey)}</p>
 
@@ -827,17 +961,19 @@ export default function SaybaArcLinktree() {
                   <p>{t("contact.pricing")}</p>
                 </div>
 
-                <a
+                <motion.a
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
                   href="https://wa.me/6287721916495?text=_%2ASayba+Arc%2A_%0A%2AWebsite%2A+%E2%86%92+www.sayba.shop%0A%2AInstagram%2A+%E2%86%92+%40sayba.arc&type=phone_number&app_absent=0"
                   target="_blank"
                   rel="noopener noreferrer"
                   onClick={handleLinkClick}
                   onMouseEnter={playHover}
-                  className="bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white px-8 py-3 rounded-xl font-semibold transition-all duration-300 hover:scale-105 shadow-lg flex items-center space-x-2 glow-hover interactive-scale"
+                  className="bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white px-8 py-3 rounded-xl font-semibold transition-all duration-300 shadow-lg flex items-center space-x-2 glow-hover min-h-[48px] touch-manipulation"
                 >
                   <MessageCircle className="h-5 w-5" />
                   <span>{t("order.now")}</span>
-                </a>
+                </motion.a>
               </div>
 
               {/* Modal Slide Indicators */}
@@ -851,15 +987,17 @@ export default function SaybaArcLinktree() {
                       playClick()
                     }}
                     onMouseEnter={playHover}
-                    className={`w-2 h-2 rounded-full transition-all duration-300 glow-hover interactive-scale ${
+                    className={`w-3 h-3 rounded-full transition-all duration-300 glow-hover interactive-scale min-h-[44px] min-w-[44px] flex items-center justify-center touch-manipulation ${
                       modalSlide === index ? "bg-orange-500 scale-125" : "bg-gray-600 hover:bg-gray-500"
                     }`}
-                  />
+                  >
+                    <div className={`w-3 h-3 rounded-full ${modalSlide === index ? "bg-orange-500" : "bg-gray-600"}`} />
+                  </button>
                 ))}
               </div>
             </div>
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
       )}
     </div>
   )

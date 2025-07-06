@@ -1,13 +1,12 @@
 "use client"
-
-import type React from "react"
-import { useState, useRef } from "react"
+import { useState } from "react"
 import Image from "next/image"
 import { ChevronLeft, ChevronRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { useAudioFeedback } from "@/hooks/useAudioFeedback"
 import { useLanguage } from "@/hooks/useLanguage"
+import { motion } from "framer-motion"
 
 interface Product {
   id: number
@@ -32,8 +31,6 @@ export function ProductCarouselPages({
   isAutoPlaying,
 }: ProductCarouselPagesProps) {
   const [isTransitioning, setIsTransitioning] = useState(false)
-  const touchStartX = useRef<number>(0)
-  const touchEndX = useRef<number>(0)
   const { playSwipe, playHover, playClick } = useAudioFeedback()
   const { t } = useLanguage()
 
@@ -61,46 +58,23 @@ export function ProductCarouselPages({
     setTimeout(() => setIsTransitioning(false), 400)
   }
 
-  // Touch handlers
-  const handleTouchStart = (e: React.TouchEvent) => {
-    touchStartX.current = e.targetTouches[0].clientX
-  }
-
-  const handleTouchMove = (e: React.TouchEvent) => {
-    touchEndX.current = e.targetTouches[0].clientX
-  }
-
-  const handleTouchEnd = () => {
-    if (!touchStartX.current || !touchEndX.current) return
-
-    const distance = touchStartX.current - touchEndX.current
-    const isLeftSwipe = distance > 50
-    const isRightSwipe = distance < -50
-
-    if (isLeftSwipe) {
-      nextSlide()
-    }
-    if (isRightSwipe) {
-      prevSlide()
-    }
-  }
-
   return (
     <div className="relative w-full">
       {/* Desktop Layout */}
       <div className="hidden lg:block">
         <div className="relative overflow-hidden rounded-2xl">
-          <div
+          <motion.div
             className="flex transition-transform duration-400 ease-out"
             style={{ transform: `translateX(-${currentSlide * 100}%)` }}
-            onTouchStart={handleTouchStart}
-            onTouchMove={handleTouchMove}
-            onTouchEnd={handleTouchEnd}
+            animate={{ x: `-${currentSlide * 100}%` }}
+            transition={{ duration: 0.4, ease: "easeOut" }}
           >
             {products.map((product, index) => (
               <div key={product.id} className="w-full flex-shrink-0 px-4">
                 <Card className="bg-gray-800 border-gray-700 hover:bg-gray-750 transition-all duration-300 hover:scale-[1.02] shadow-xl product-card-border cursor-pointer">
-                  <button
+                  <motion.button
+                    whileHover={{ scale: 1.01 }}
+                    whileTap={{ scale: 0.99 }}
                     onClick={() => onProductClick(product)}
                     onMouseEnter={playHover}
                     className="w-full group p-0 bg-transparent border-none"
@@ -135,11 +109,11 @@ export function ProductCarouselPages({
                         </div>
                       </div>
                     </CardContent>
-                  </button>
+                  </motion.button>
                 </Card>
               </div>
             ))}
-          </div>
+          </motion.div>
 
           {/* Desktop Navigation Buttons */}
           <div className="absolute left-4 top-1/2 transform -translate-y-1/2 z-10">
@@ -173,19 +147,20 @@ export function ProductCarouselPages({
       {/* Mobile Layout */}
       <div className="lg:hidden">
         <div className="relative overflow-hidden rounded-xl">
-          <div
+          <motion.div
             className="flex transition-transform duration-400 ease-out"
             style={{ transform: `translateX(-${currentSlide * 100}%)` }}
-            onTouchStart={handleTouchStart}
-            onTouchMove={handleTouchMove}
-            onTouchEnd={handleTouchEnd}
+            animate={{ x: `-${currentSlide * 100}%` }}
+            transition={{ duration: 0.4, ease: "easeOut" }}
           >
             {products.map((product, index) => (
               <div key={product.id} className="w-full flex-shrink-0 px-2">
                 <Card className="bg-gray-800 border-gray-700 hover:bg-gray-750 transition-all duration-300 shadow-lg mobile-product-card-border cursor-pointer">
-                  <button
+                  <motion.button
+                    whileHover={{ scale: 1.01 }}
+                    whileTap={{ scale: 0.99 }}
                     onClick={() => onProductClick(product)}
-                    className="w-full group p-0 bg-transparent border-none"
+                    className="w-full group p-0 bg-transparent border-none min-h-[60px] touch-manipulation"
                     disabled={isTransitioning}
                   >
                     <CardContent className="p-4">
@@ -200,7 +175,7 @@ export function ProductCarouselPages({
                         />
                       </div>
 
-                      {/* Mobile Product Info */}
+                      {/* Mobile Product Info - Centered */}
                       <div className="bg-gray-700 rounded-lg p-5 text-center">
                         <h3 className="text-xl font-bold text-white group-hover:text-orange-400 transition-colors mb-2">
                           {t(product.titleKey)}
@@ -208,11 +183,11 @@ export function ProductCarouselPages({
                         <p className="text-lg text-orange-400 font-medium">{t(product.subtitleKey)}</p>
                       </div>
                     </CardContent>
-                  </button>
+                  </motion.button>
                 </Card>
               </div>
             ))}
-          </div>
+          </motion.div>
 
           {/* Mobile Navigation Buttons */}
           <div className="absolute left-2 top-1/2 transform -translate-y-1/2 z-10">
@@ -221,7 +196,7 @@ export function ProductCarouselPages({
               size="icon"
               onClick={prevSlide}
               disabled={isTransitioning}
-              className="w-12 h-12 bg-gray-900/90 backdrop-blur-sm border-2 border-gray-600 text-white hover:bg-orange-500/20 hover:border-orange-500 hover:text-orange-400 transition-all duration-300 rounded-full button-glow-bg disabled:opacity-50 shadow-lg"
+              className="w-12 h-12 bg-gray-900/90 backdrop-blur-sm border-2 border-gray-600 text-white hover:bg-orange-500/20 hover:border-orange-500 hover:text-orange-400 transition-all duration-300 rounded-full button-glow-bg disabled:opacity-50 shadow-lg min-h-[48px] min-w-[48px] touch-manipulation"
             >
               <ChevronLeft className="h-5 w-5" />
             </Button>
@@ -233,7 +208,7 @@ export function ProductCarouselPages({
               size="icon"
               onClick={nextSlide}
               disabled={isTransitioning}
-              className="w-12 h-12 bg-gray-900/90 backdrop-blur-sm border-2 border-gray-600 text-white hover:bg-orange-500/20 hover:border-orange-500 hover:text-orange-400 transition-all duration-300 rounded-full button-glow-bg disabled:opacity-50 shadow-lg"
+              className="w-12 h-12 bg-gray-900/90 backdrop-blur-sm border-2 border-gray-600 text-white hover:bg-orange-500/20 hover:border-orange-500 hover:text-orange-400 transition-all duration-300 rounded-full button-glow-bg disabled:opacity-50 shadow-lg min-h-[48px] min-w-[48px] touch-manipulation"
             >
               <ChevronRight className="h-5 w-5" />
             </Button>
@@ -249,12 +224,14 @@ export function ProductCarouselPages({
             onClick={() => goToSlide(index)}
             onMouseEnter={playHover}
             disabled={isTransitioning}
-            className={`w-3 h-3 rounded-full transition-all duration-300 glow-hover interactive-scale disabled:opacity-50 ${
+            className={`w-3 h-3 rounded-full transition-all duration-300 glow-hover interactive-scale disabled:opacity-50 min-h-[44px] min-w-[44px] flex items-center justify-center touch-manipulation ${
               currentSlide === index
                 ? "bg-orange-500 scale-125 shadow-lg shadow-orange-500/50"
                 : "bg-gray-600 hover:bg-gray-500"
             }`}
-          />
+          >
+            <div className={`w-3 h-3 rounded-full ${currentSlide === index ? "bg-orange-500" : "bg-gray-600"}`} />
+          </button>
         ))}
       </div>
     </div>
