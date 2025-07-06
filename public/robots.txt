@@ -1,0 +1,33 @@
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://www.sayba.shop/sitemap.xml
+Sitemap: https://sayba-arc.vercel.app/sitemap.xml
+
+# Specific crawling instructions
+User-agent: Googlebot
+Allow: /
+Crawl-delay: 1
+
+User-agent: Bingbot
+Allow: /
+Crawl-delay: 1
+
+# Block access to admin areas (if any)
+Disallow: /admin/
+Disallow: /private/
+Disallow: /*.json$
+
+# Allow important files
+Allow: /sitemap.xml
+Allow: /robots.txt
+Allow: /favicon.ico
+Allow: /logo.png
+Allow: /sayba-logo.png
+Allow: /sayba-square-logo.png
+Allow: /googlee85d0dc9f6a47b1b.html
+
+# SEO optimization
+Allow: /sounds/
+Allow: /public/
