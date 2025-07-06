@@ -23,9 +23,9 @@ export const metadata: Metadata = {
     siteName: "Sayba Arc",
     images: [
       {
-        url: "/sayba-new-logo.png",
+        url: "/sayba-square-logo.png",
         width: 1200,
-        height: 630,
+        height: 1200,
         alt: "Sayba Arc - Art You Believe",
       },
     ],
@@ -36,7 +36,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Sayba Arc - Art You Believe",
     description: "Digital solutions & creative services untuk semua kebutuhan bisnis Anda",
-    images: ["/sayba-new-logo.png"],
+    images: ["/sayba-square-logo.png"],
   },
   verification: {
     google: "googlee85d0dc9f6a47b1b",
@@ -44,7 +44,12 @@ export const metadata: Metadata = {
   alternates: {
     canonical: "https://www.sayba.shop",
   },
-    generator: 'v0.dev'
+  generator: "Next.js",
+  icons: {
+    icon: "/icon",
+    shortcut: "/favicon.ico",
+    apple: "/apple-touch-icon.png",
+  },
 }
 
 export default function RootLayout({
@@ -68,7 +73,7 @@ export default function RootLayout({
               alternateName: ["Sayba", "Sayba Arc Vercel"],
               description: "Art You Believe - Digital solutions and creative services",
               url: ["https://www.sayba.shop", "https://sayba-arc.vercel.app"],
-              logo: "https://www.sayba.shop/sayba-new-logo.png",
+              logo: "https://www.sayba.shop/sayba-square-logo.png",
               contactPoint: {
                 "@type": "ContactPoint",
                 telephone: "+62-877-2191-6495",

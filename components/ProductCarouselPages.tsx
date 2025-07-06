@@ -1,13 +1,10 @@
 "use client"
-
-import type React from "react"
-import { useState, useRef } from "react"
+import { useState } from "react"
 import Image from "next/image"
-import { ChevronLeft, ChevronRight } from "lucide-react"
-import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { useAudioFeedback } from "@/hooks/useAudioFeedback"
 import { useLanguage } from "@/hooks/useLanguage"
+import { motion } from "framer-motion"
 
 interface Product {
   id: number
@@ -32,8 +29,6 @@ export function ProductCarouselPages({
   isAutoPlaying,
 }: ProductCarouselPagesProps) {
   const [isTransitioning, setIsTransitioning] = useState(false)
-  const touchStartX = useRef<number>(0)
-  const touchEndX = useRef<number>(0)
   const { playSwipe, playHover, playClick } = useAudioFeedback()
   const { t } = useLanguage()
 
@@ -61,46 +56,23 @@ export function ProductCarouselPages({
     setTimeout(() => setIsTransitioning(false), 400)
   }
 
-  // Touch handlers
-  const handleTouchStart = (e: React.TouchEvent) => {
-    touchStartX.current = e.targetTouches[0].clientX
-  }
-
-  const handleTouchMove = (e: React.TouchEvent) => {
-    touchEndX.current = e.targetTouches[0].clientX
-  }
-
-  const handleTouchEnd = () => {
-    if (!touchStartX.current || !touchEndX.current) return
-
-    const distance = touchStartX.current - touchEndX.current
-    const isLeftSwipe = distance > 50
-    const isRightSwipe = distance < -50
-
-    if (isLeftSwipe) {
-      nextSlide()
-    }
-    if (isRightSwipe) {
-      prevSlide()
-    }
-  }
-
   return (
-    <div className="relative w-full">
+    <div className="relative w-full max-w-full overflow-hidden">
       {/* Desktop Layout */}
       <div className="hidden lg:block">
         <div className="relative overflow-hidden rounded-2xl">
-          <div
+          <motion.div
             className="flex transition-transform duration-400 ease-out"
             style={{ transform: `translateX(-${currentSlide * 100}%)` }}
-            onTouchStart={handleTouchStart}
-            onTouchMove={handleTouchMove}
-            onTouchEnd={handleTouchEnd}
+            animate={{ x: `-${currentSlide * 100}%` }}
+            transition={{ duration: 0.4, ease: "easeOut" }}
           >
             {products.map((product, index) => (
               <div key={product.id} className="w-full flex-shrink-0 px-4">
-                <Card className="bg-gray-800 border-gray-700 hover:bg-gray-750 transition-all duration-300 hover:scale-[1.02] shadow-xl product-card-border cursor-pointer">
-                  <button
+                <Card className="bg-gray-800/50 backdrop-blur-sm border-gray-700/50 hover:bg-gray-750/50 transition-all duration-500 hover:scale-[1.01] shadow-xl product-card-border cursor-pointer hover:shadow-2xl hover:shadow-orange-500/10">
+                  <motion.button
+                    whileHover={{ scale: 1.005 }}
+                    whileTap={{ scale: 0.995 }}
                     onClick={() => onProductClick(product)}
                     onMouseEnter={playHover}
                     className="w-full group p-0 bg-transparent border-none"
@@ -109,24 +81,24 @@ export function ProductCarouselPages({
                     <CardContent className="p-8">
                       <div className="flex items-center space-x-8">
                         {/* Product Image - 1:1 Aspect Ratio */}
-                        <div className="w-80 h-80 rounded-2xl overflow-hidden shadow-2xl transition-all duration-300 relative">
+                        <div className="w-80 h-80 rounded-2xl overflow-hidden shadow-2xl transition-all duration-500 relative">
                           <Image
                             src={product.image || "/placeholder.svg"}
                             alt={t(product.titleKey)}
                             width={320}
                             height={320}
-                            className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                           />
                         </div>
 
                         {/* Product Info */}
                         <div className="flex-1 text-left">
-                          <div className="bg-gray-700 rounded-xl p-6 h-full flex flex-col justify-center">
-                            <h3 className="text-4xl font-bold text-white group-hover:text-orange-400 transition-colors mb-4">
+                          <div className="bg-gray-700/50 backdrop-blur-sm rounded-xl p-6 h-full flex flex-col justify-center transition-all duration-300 group-hover:bg-gray-600/50">
+                            <h3 className="text-4xl font-bold text-white group-hover:text-orange-400 transition-colors duration-300 mb-4">
                               {t(product.titleKey)}
                             </h3>
                             <p className="text-2xl text-orange-400 font-medium mb-6">{t(product.subtitleKey)}</p>
-                            <div className="bg-gray-600 rounded-lg p-4">
+                            <div className="bg-gray-600/50 rounded-lg p-4">
                               <p className="text-gray-300 text-lg leading-relaxed">
                                 {t(`${product.titleKey.replace(/\./g, ".")}.description`)}
                               </p>
@@ -135,126 +107,137 @@ export function ProductCarouselPages({
                         </div>
                       </div>
                     </CardContent>
-                  </button>
+                  </motion.button>
                 </Card>
               </div>
             ))}
-          </div>
+          </motion.div>
 
           {/* Desktop Navigation Buttons */}
           <div className="absolute left-4 top-1/2 transform -translate-y-1/2 z-10">
-            <Button
-              variant="ghost"
-              size="icon"
+            <motion.button
               onClick={prevSlide}
               onMouseEnter={playHover}
               disabled={isTransitioning}
-              className="w-14 h-14 bg-gray-900/90 backdrop-blur-sm border-2 border-gray-600 text-white hover:bg-orange-500/20 hover:border-orange-500 hover:text-orange-400 transition-all duration-300 rounded-full button-glow-bg disabled:opacity-50 glow-hover shadow-xl"
+              whileHover={{ scale: 1.1, x: -2 }}
+              whileTap={{ scale: 0.9 }}
+              className="w-14 h-14 bg-gray-900/90 backdrop-blur-sm border-2 border-gray-600 text-white hover:bg-orange-500/20 hover:border-orange-500 hover:text-orange-400 transition-all duration-300 rounded-full disabled:opacity-50 shadow-xl"
             >
-              <ChevronLeft className="h-7 w-7" />
-            </Button>
+              <svg className="h-7 w-7 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+              </svg>
+            </motion.button>
           </div>
 
           <div className="absolute right-4 top-1/2 transform -translate-y-1/2 z-10">
-            <Button
-              variant="ghost"
-              size="icon"
+            <motion.button
               onClick={nextSlide}
               onMouseEnter={playHover}
               disabled={isTransitioning}
-              className="w-14 h-14 bg-gray-900/90 backdrop-blur-sm border-2 border-gray-600 text-white hover:bg-orange-500/20 hover:border-orange-500 hover:text-orange-400 transition-all duration-300 rounded-full button-glow-bg disabled:opacity-50 glow-hover shadow-xl"
+              whileHover={{ scale: 1.1, x: 2 }}
+              whileTap={{ scale: 0.9 }}
+              className="w-14 h-14 bg-gray-900/90 backdrop-blur-sm border-2 border-gray-600 text-white hover:bg-orange-500/20 hover:border-orange-500 hover:text-orange-400 transition-all duration-300 rounded-full disabled:opacity-50 shadow-xl"
             >
-              <ChevronRight className="h-7 w-7" />
-            </Button>
+              <svg className="h-7 w-7 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+            </motion.button>
           </div>
         </div>
       </div>
 
       {/* Mobile Layout */}
-      <div className="lg:hidden">
+      <div className="lg:hidden w-full max-w-full">
         <div className="relative overflow-hidden rounded-xl">
-          <div
+          <motion.div
             className="flex transition-transform duration-400 ease-out"
             style={{ transform: `translateX(-${currentSlide * 100}%)` }}
-            onTouchStart={handleTouchStart}
-            onTouchMove={handleTouchMove}
-            onTouchEnd={handleTouchEnd}
+            animate={{ x: `-${currentSlide * 100}%` }}
+            transition={{ duration: 0.4, ease: "easeOut" }}
           >
             {products.map((product, index) => (
-              <div key={product.id} className="w-full flex-shrink-0 px-2">
-                <Card className="bg-gray-800 border-gray-700 hover:bg-gray-750 transition-all duration-300 shadow-lg mobile-product-card-border cursor-pointer">
-                  <button
+              <div key={product.id} className="w-full flex-shrink-0 px-1">
+                <Card className="bg-gray-800/50 backdrop-blur-sm border-gray-700/50 hover:bg-gray-750/50 transition-all duration-500 shadow-lg mobile-product-card-border cursor-pointer hover:shadow-xl">
+                  <motion.button
+                    whileHover={{ scale: 1.01 }}
+                    whileTap={{ scale: 0.99 }}
                     onClick={() => onProductClick(product)}
-                    className="w-full group p-0 bg-transparent border-none"
+                    className="w-full group p-0 bg-transparent border-none min-h-[60px] touch-manipulation"
                     disabled={isTransitioning}
                   >
-                    <CardContent className="p-4">
+                    <CardContent className="p-3">
                       {/* Mobile Product Image - 1:1 Aspect Ratio */}
-                      <div className="w-full aspect-square rounded-xl overflow-hidden shadow-lg mb-4 transition-all duration-300 relative">
+                      <div className="w-full aspect-square rounded-xl overflow-hidden shadow-lg mb-3 transition-all duration-500 relative">
                         <Image
                           src={product.image || "/placeholder.svg"}
                           alt={t(product.titleKey)}
-                          width={400}
-                          height={400}
-                          className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                          width={300}
+                          height={300}
+                          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                         />
                       </div>
 
-                      {/* Mobile Product Info */}
-                      <div className="bg-gray-700 rounded-lg p-5 text-center">
-                        <h3 className="text-xl font-bold text-white group-hover:text-orange-400 transition-colors mb-2">
+                      {/* Mobile Product Info - Centered */}
+                      <div className="bg-gray-700/50 backdrop-blur-sm rounded-lg p-4 text-center transition-all duration-300 group-hover:bg-gray-600/50">
+                        <h3 className="text-lg font-bold text-white group-hover:text-orange-400 transition-colors duration-300 mb-1">
                           {t(product.titleKey)}
                         </h3>
-                        <p className="text-lg text-orange-400 font-medium">{t(product.subtitleKey)}</p>
+                        <p className="text-sm text-orange-400 font-medium">{t(product.subtitleKey)}</p>
                       </div>
                     </CardContent>
-                  </button>
+                  </motion.button>
                 </Card>
               </div>
             ))}
-          </div>
+          </motion.div>
 
           {/* Mobile Navigation Buttons */}
-          <div className="absolute left-2 top-1/2 transform -translate-y-1/2 z-10">
-            <Button
-              variant="ghost"
-              size="icon"
+          <div className="absolute left-1 top-1/2 transform -translate-y-1/2 z-10">
+            <motion.button
               onClick={prevSlide}
               disabled={isTransitioning}
-              className="w-12 h-12 bg-gray-900/90 backdrop-blur-sm border-2 border-gray-600 text-white hover:bg-orange-500/20 hover:border-orange-500 hover:text-orange-400 transition-all duration-300 rounded-full button-glow-bg disabled:opacity-50 shadow-lg"
+              whileHover={{ scale: 1.1, x: -1 }}
+              whileTap={{ scale: 0.9 }}
+              className="w-10 h-10 bg-gray-900/90 backdrop-blur-sm border border-gray-600 text-white hover:bg-orange-500/20 hover:border-orange-500 hover:text-orange-400 transition-all duration-300 rounded-full disabled:opacity-50 shadow-lg min-h-[40px] min-w-[40px] touch-manipulation"
             >
-              <ChevronLeft className="h-5 w-5" />
-            </Button>
+              <svg className="h-4 w-4 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+              </svg>
+            </motion.button>
           </div>
 
-          <div className="absolute right-2 top-1/2 transform -translate-y-1/2 z-10">
-            <Button
-              variant="ghost"
-              size="icon"
+          <div className="absolute right-1 top-1/2 transform -translate-y-1/2 z-10">
+            <motion.button
               onClick={nextSlide}
               disabled={isTransitioning}
-              className="w-12 h-12 bg-gray-900/90 backdrop-blur-sm border-2 border-gray-600 text-white hover:bg-orange-500/20 hover:border-orange-500 hover:text-orange-400 transition-all duration-300 rounded-full button-glow-bg disabled:opacity-50 shadow-lg"
+              whileHover={{ scale: 1.1, x: 1 }}
+              whileTap={{ scale: 0.9 }}
+              className="w-10 h-10 bg-gray-900/90 backdrop-blur-sm border border-gray-600 text-white hover:bg-orange-500/20 hover:border-orange-500 hover:text-orange-400 transition-all duration-300 rounded-full disabled:opacity-50 shadow-lg min-h-[40px] min-w-[40px] touch-manipulation"
             >
-              <ChevronRight className="h-5 w-5" />
-            </Button>
+              <svg className="h-4 w-4 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+            </motion.button>
           </div>
         </div>
       </div>
 
-      {/* Page Indicators */}
-      <div className="flex justify-center space-x-3 mt-6">
+      {/* Slide Indicators - Much Smaller without shadows */}
+      <div className="flex justify-center space-x-1.5 mt-6">
         {products.map((_, index) => (
-          <button
+          <motion.button
             key={index}
             onClick={() => goToSlide(index)}
             onMouseEnter={playHover}
             disabled={isTransitioning}
-            className={`w-3 h-3 rounded-full transition-all duration-300 glow-hover interactive-scale disabled:opacity-50 ${
-              currentSlide === index
-                ? "bg-orange-500 scale-125 shadow-lg shadow-orange-500/50"
-                : "bg-gray-600 hover:bg-gray-500"
+            whileHover={{ scale: 1.5 }}
+            whileTap={{ scale: 0.8 }}
+            className={`w-1.5 h-1.5 rounded-full transition-all duration-300 min-h-[24px] min-w-[24px] flex items-center justify-center touch-manipulation ${
+              currentSlide === index ? "bg-orange-500" : "bg-gray-600 hover:bg-gray-500"
             }`}
-          />
+          >
+            <div className={`w-1.5 h-1.5 rounded-full ${currentSlide === index ? "bg-orange-500" : "bg-gray-600"}`} />
+          </motion.button>
         ))}
       </div>
     </div>
