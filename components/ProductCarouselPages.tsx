@@ -59,7 +59,7 @@ export function ProductCarouselPages({
   }
 
   return (
-    <div className="relative w-full">
+    <div className="relative w-full max-w-full overflow-hidden">
       {/* Desktop Layout */}
       <div className="hidden lg:block">
         <div className="relative overflow-hidden rounded-2xl">
@@ -71,7 +71,7 @@ export function ProductCarouselPages({
           >
             {products.map((product, index) => (
               <div key={product.id} className="w-full flex-shrink-0 px-4">
-                <Card className="bg-gray-800 border-gray-700 hover:bg-gray-750 transition-all duration-300 hover:scale-[1.02] shadow-xl product-card-border cursor-pointer">
+                <Card className="bg-gray-800/50 backdrop-blur-sm border-gray-700/50 hover:bg-gray-750/50 transition-all duration-300 hover:scale-[1.02] shadow-xl product-card-border cursor-pointer">
                   <motion.button
                     whileHover={{ scale: 1.01 }}
                     whileTap={{ scale: 0.99 }}
@@ -95,12 +95,12 @@ export function ProductCarouselPages({
 
                         {/* Product Info */}
                         <div className="flex-1 text-left">
-                          <div className="bg-gray-700 rounded-xl p-6 h-full flex flex-col justify-center">
+                          <div className="bg-gray-700/50 backdrop-blur-sm rounded-xl p-6 h-full flex flex-col justify-center">
                             <h3 className="text-4xl font-bold text-white group-hover:text-orange-400 transition-colors mb-4">
                               {t(product.titleKey)}
                             </h3>
                             <p className="text-2xl text-orange-400 font-medium mb-6">{t(product.subtitleKey)}</p>
-                            <div className="bg-gray-600 rounded-lg p-4">
+                            <div className="bg-gray-600/50 rounded-lg p-4">
                               <p className="text-gray-300 text-lg leading-relaxed">
                                 {t(`${product.titleKey.replace(/\./g, ".")}.description`)}
                               </p>
@@ -145,17 +145,17 @@ export function ProductCarouselPages({
       </div>
 
       {/* Mobile Layout */}
-      <div className="lg:hidden">
+      <div className="lg:hidden w-full max-w-full">
         <div className="relative overflow-hidden rounded-xl">
           <motion.div
             className="flex transition-transform duration-400 ease-out"
-            style={{ transform: `translateX(-${currentSlide * 100}%)` }}
+            style={{ transform: `translateX(-${currentSlide * 100})` }} // Fixed the error here
             animate={{ x: `-${currentSlide * 100}%` }}
             transition={{ duration: 0.4, ease: "easeOut" }}
           >
             {products.map((product, index) => (
-              <div key={product.id} className="w-full flex-shrink-0 px-2">
-                <Card className="bg-gray-800 border-gray-700 hover:bg-gray-750 transition-all duration-300 shadow-lg mobile-product-card-border cursor-pointer">
+              <div key={product.id} className="w-full flex-shrink-0 px-1">
+                <Card className="bg-gray-800/50 backdrop-blur-sm border-gray-700/50 hover:bg-gray-750/50 transition-all duration-300 shadow-lg mobile-product-card-border cursor-pointer">
                   <motion.button
                     whileHover={{ scale: 1.01 }}
                     whileTap={{ scale: 0.99 }}
@@ -163,24 +163,24 @@ export function ProductCarouselPages({
                     className="w-full group p-0 bg-transparent border-none min-h-[60px] touch-manipulation"
                     disabled={isTransitioning}
                   >
-                    <CardContent className="p-4">
+                    <CardContent className="p-3">
                       {/* Mobile Product Image - 1:1 Aspect Ratio */}
-                      <div className="w-full aspect-square rounded-xl overflow-hidden shadow-lg mb-4 transition-all duration-300 relative">
+                      <div className="w-full aspect-square rounded-xl overflow-hidden shadow-lg mb-3 transition-all duration-300 relative">
                         <Image
                           src={product.image || "/placeholder.svg"}
                           alt={t(product.titleKey)}
-                          width={400}
-                          height={400}
+                          width={300}
+                          height={300}
                           className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
                         />
                       </div>
 
                       {/* Mobile Product Info - Centered */}
-                      <div className="bg-gray-700 rounded-lg p-5 text-center">
-                        <h3 className="text-xl font-bold text-white group-hover:text-orange-400 transition-colors mb-2">
+                      <div className="bg-gray-700/50 backdrop-blur-sm rounded-lg p-4 text-center">
+                        <h3 className="text-lg font-bold text-white group-hover:text-orange-400 transition-colors mb-1">
                           {t(product.titleKey)}
                         </h3>
-                        <p className="text-lg text-orange-400 font-medium">{t(product.subtitleKey)}</p>
+                        <p className="text-sm text-orange-400 font-medium">{t(product.subtitleKey)}</p>
                       </div>
                     </CardContent>
                   </motion.button>
@@ -190,47 +190,45 @@ export function ProductCarouselPages({
           </motion.div>
 
           {/* Mobile Navigation Buttons */}
-          <div className="absolute left-2 top-1/2 transform -translate-y-1/2 z-10">
+          <div className="absolute left-1 top-1/2 transform -translate-y-1/2 z-10">
             <Button
               variant="ghost"
               size="icon"
               onClick={prevSlide}
               disabled={isTransitioning}
-              className="w-12 h-12 bg-gray-900/90 backdrop-blur-sm border-2 border-gray-600 text-white hover:bg-orange-500/20 hover:border-orange-500 hover:text-orange-400 transition-all duration-300 rounded-full button-glow-bg disabled:opacity-50 shadow-lg min-h-[48px] min-w-[48px] touch-manipulation"
+              className="w-10 h-10 bg-gray-900/90 backdrop-blur-sm border border-gray-600 text-white hover:bg-orange-500/20 hover:border-orange-500 hover:text-orange-400 transition-all duration-300 rounded-full button-glow-bg disabled:opacity-50 shadow-lg min-h-[40px] min-w-[40px] touch-manipulation"
             >
-              <ChevronLeft className="h-5 w-5" />
+              <ChevronLeft className="h-4 w-4" />
             </Button>
           </div>
 
-          <div className="absolute right-2 top-1/2 transform -translate-y-1/2 z-10">
+          <div className="absolute right-1 top-1/2 transform -translate-y-1/2 z-10">
             <Button
               variant="ghost"
               size="icon"
               onClick={nextSlide}
               disabled={isTransitioning}
-              className="w-12 h-12 bg-gray-900/90 backdrop-blur-sm border-2 border-gray-600 text-white hover:bg-orange-500/20 hover:border-orange-500 hover:text-orange-400 transition-all duration-300 rounded-full button-glow-bg disabled:opacity-50 shadow-lg min-h-[48px] min-w-[48px] touch-manipulation"
+              className="w-10 h-10 bg-gray-900/90 backdrop-blur-sm border border-gray-600 text-white hover:bg-orange-500/20 hover:border-orange-500 hover:text-orange-400 transition-all duration-300 rounded-full button-glow-bg disabled:opacity-50 shadow-lg min-h-[40px] min-w-[40px] touch-manipulation"
             >
-              <ChevronRight className="h-5 w-5" />
+              <ChevronRight className="h-4 w-4" />
             </Button>
           </div>
         </div>
       </div>
 
-      {/* Page Indicators */}
-      <div className="flex justify-center space-x-3 mt-6">
+      {/* Page Indicators - Smaller */}
+      <div className="flex justify-center space-x-2 mt-6">
         {products.map((_, index) => (
           <button
             key={index}
             onClick={() => goToSlide(index)}
             onMouseEnter={playHover}
             disabled={isTransitioning}
-            className={`w-3 h-3 rounded-full transition-all duration-300 glow-hover interactive-scale disabled:opacity-50 min-h-[44px] min-w-[44px] flex items-center justify-center touch-manipulation ${
-              currentSlide === index
-                ? "bg-orange-500 scale-125 shadow-lg shadow-orange-500/50"
-                : "bg-gray-600 hover:bg-gray-500"
+            className={`w-2 h-2 rounded-full transition-all duration-300 glow-hover interactive-scale disabled:opacity-50 min-h-[32px] min-w-[32px] flex items-center justify-center touch-manipulation ${
+              currentSlide === index ? "bg-orange-500 shadow-lg shadow-orange-500/50" : "bg-gray-600 hover:bg-gray-500"
             }`}
           >
-            <div className={`w-3 h-3 rounded-full ${currentSlide === index ? "bg-orange-500" : "bg-gray-600"}`} />
+            <div className={`w-2 h-2 rounded-full ${currentSlide === index ? "bg-orange-500" : "bg-gray-600"}`} />
           </button>
         ))}
       </div>

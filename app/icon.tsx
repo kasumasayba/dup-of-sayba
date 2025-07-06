@@ -1,13 +1,14 @@
 import { ImageResponse } from "next/og"
 
-// Image metadata
+export const runtime = "edge"
+
 export const size = {
   width: 32,
   height: 32,
 }
+
 export const contentType = "image/png"
 
-// Image generation
 export default function Icon() {
   return new ImageResponse(
     <div
@@ -20,8 +21,8 @@ export default function Icon() {
         alignItems: "center",
         justifyContent: "center",
         color: "white",
-        borderRadius: "50%",
         fontWeight: "bold",
+        borderRadius: "50%",
       }}
     >
       SA
