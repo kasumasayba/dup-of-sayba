@@ -481,11 +481,9 @@ export default function SaybaArcLinktree() {
             <div className="flex items-center space-x-4">
               {/* Square logo for header */}
               <motion.div
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.8, ease: "easeOut" }}
                 whileHover={{ scale: 1.05, rotate: 5 }}
-                className="w-40 h-40 mx-auto rounded-full border-2 border-orange-500/50 shadow-2xl flex items-center justify-center overflow-hidden relative bg-gray-800/50 backdrop-blur-sm transition-all duration-300 hover:border-orange-500 hover:shadow-lg hover:shadow-orange-500/20"
+                whileTap={{ scale: 0.95 }}
+                className="w-12 h-12 rounded-lg border-2 border-orange-500/50 flex items-center justify-center overflow-hidden bg-gray-800/50 backdrop-blur-sm transition-all duration-300 hover:border-orange-500 hover:shadow-lg hover:shadow-orange-500/20"
               >
                 <Image
                   src="/sayba-square-logo.png"
@@ -518,11 +516,9 @@ export default function SaybaArcLinktree() {
             <div className="flex items-center space-x-3">
               {/* Square logo for mobile header */}
               <motion.div
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.8, ease: "easeOut" }}
                 whileHover={{ scale: 1.05 }}
-                className="w-28 h-28 mx-auto rounded-full border-2 border-orange-500/50 shadow-2xl flex items-center justify-center overflow-hidden relative bg-gray-800/50 backdrop-blur-sm transition-all duration-300 hover:border-orange-500 hover:shadow-lg hover:shadow-orange-500/20"
+                whileTap={{ scale: 0.95 }}
+                className="w-10 h-10 rounded border-2 border-orange-500/50 flex items-center justify-center overflow-hidden bg-gray-800/50 backdrop-blur-sm transition-all duration-300 hover:border-orange-500"
               >
                 <Image
                   src="/sayba-square-logo.png"
@@ -652,16 +648,26 @@ export default function SaybaArcLinktree() {
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: -10 }}
                       transition={{ duration: 0.5 }}
-                      className={`text-5xl font-light tracking-wide absolute ${
-                        showAlternateText ? "text-orange-400 font-medium" : "text-white"
+                      className={`text-5xl font-bold tracking-wide absolute bg-gradient-to-r ${
+                        showAlternateText
+                          ? "from-orange-400 via-orange-500 to-orange-600 bg-clip-text text-transparent drop-shadow-lg"
+                          : "from-white via-gray-100 to-gray-200 bg-clip-text text-transparent drop-shadow-lg"
                       }`}
+                      style={{
+                        textShadow: showAlternateText
+                          ? "0 0 20px rgba(249, 115, 22, 0.3)"
+                          : "0 0 20px rgba(255, 255, 255, 0.1)",
+                      }}
                     >
                       {showAlternateText ? t("art.you.believe") : t("sayba.arc")}
                     </motion.h1>
                   </div>
                   <div className="w-24 h-px bg-gradient-to-r from-transparent via-orange-500 to-transparent mx-auto"></div>
-                  <p className="text-gray-400 max-w-2xl mx-auto leading-relaxed text-lg font-light">
-                    {t("hero.description")}
+                  <p className="text-gray-400 max-w-3xl mx-auto leading-relaxed text-lg font-light">
+                    Sayba Arc adalah penyedia layanan digital dan solusi kreatif terpercaya. Dengan motto 'Art You
+                    Believe', kami menghadirkan berbagai layanan profesional mulai dari jasa tugas, web design, mobile
+                    apps, graphic design, hingga AutoCAD service dan ArcGIS Service. Wujudkan ide kreatif Anda bersama
+                    kami!
                   </p>
                 </motion.div>
               </AnimatedSection>
@@ -763,15 +769,27 @@ export default function SaybaArcLinktree() {
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -10 }}
                     transition={{ duration: 0.5 }}
-                    className={`text-3xl font-light tracking-wide absolute ${
-                      showAlternateText ? "text-orange-400 font-medium" : "text-white"
+                    className={`text-3xl font-bold tracking-wide absolute bg-gradient-to-r ${
+                      showAlternateText
+                        ? "from-orange-400 via-orange-500 to-orange-600 bg-clip-text text-transparent drop-shadow-lg"
+                        : "from-white via-gray-100 to-gray-200 bg-clip-text text-transparent drop-shadow-lg"
                     }`}
+                    style={{
+                      textShadow: showAlternateText
+                        ? "0 0 15px rgba(249, 115, 22, 0.3)"
+                        : "0 0 15px rgba(255, 255, 255, 0.1)",
+                    }}
                   >
                     {showAlternateText ? t("art.you.believe") : t("sayba.arc")}
                   </motion.h1>
                 </div>
                 <div className="w-16 h-px bg-gradient-to-r from-transparent via-orange-500 to-transparent mx-auto"></div>
-                <p className="text-gray-400 text-sm leading-relaxed font-light px-4">{t("hero.mobile.description")}</p>
+                <p className="text-gray-400 text-sm leading-relaxed font-light px-4">
+                  Sayba Arc adalah penyedia layanan digital dan solusi kreatif terpercaya. Dengan motto 'Art You
+                  Believe', kami menghadirkan berbagai layanan profesional mulai dari jasa tugas, web design, mobile
+                  apps, graphic design, hingga AutoCAD service dan ArcGIS Service. Wujudkan ide kreatif Anda bersama
+                  kami!
+                </p>
               </motion.div>
             </AnimatedSection>
 

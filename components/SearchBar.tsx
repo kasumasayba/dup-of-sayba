@@ -73,13 +73,13 @@ export function SearchBar({ onSearch, onProductSelect, products }: SearchBarProp
       {/* Search Toggle Button */}
       <Button
         variant="ghost"
-        size="icon"
+        size="sm"
         onClick={handleToggle}
         onMouseEnter={playHover}
-        className="text-gray-400 hover:text-white hover:bg-transparent transition-all duration-300 interactive-scale no-white-bg glow-hover"
+        className="text-gray-400 hover:text-white hover:bg-transparent transition-colors interactive-scale flex items-center space-x-2 no-white-bg"
         title={t("search.placeholder")}
       >
-        {isOpen ? <X className="h-5 w-5" /> : <Search className="h-5 w-5" />}
+        {isOpen ? <X className="h-4 w-4" /> : <Search className="h-4 w-4" />}
       </Button>
 
       {/* Search Bar Overlay - Desktop */}
