@@ -279,12 +279,12 @@ const staggerContainer = {
 
 const scaleOnHover = {
   whileHover: {
-    scale: 1.02,
-    y: -2,
-    transition: { duration: 0.3, ease: [0.25, 0.46, 0.45, 0.94] },
+    scale: 1.01,
+    y: -1,
+    transition: { duration: 0.2, ease: [0.25, 0.46, 0.45, 0.94] },
   },
   whileTap: {
-    scale: 0.98,
+    scale: 0.99,
     transition: { duration: 0.1 },
   },
 }
@@ -326,6 +326,7 @@ export default function SaybaArcLinktree() {
   const [isAutoPlaying, setIsAutoPlaying] = useState(true)
   const [isLoading, setIsLoading] = useState(true)
   const [showContent, setShowContent] = useState(false)
+  const [showAlternateText, setShowAlternateText] = useState(false)
 
   // Hooks
   const { audioEnabled, toggleAudio, playClick, playSwipe, playModal, playHover, playSuccess } = useAudioFeedback()
@@ -389,6 +390,13 @@ export default function SaybaArcLinktree() {
       return () => clearTimeout(timer)
     }
   }, [isLoading])
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setShowAlternateText((prev) => !prev)
+    }, 5000)
+    return () => clearInterval(interval)
+  }, [])
 
   const nextModalSlide = () => {
     const nextIndex = (modalSlide + 1) % products.length
@@ -473,9 +481,11 @@ export default function SaybaArcLinktree() {
             <div className="flex items-center space-x-4">
               {/* Square logo for header */}
               <motion.div
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.8, ease: "easeOut" }}
                 whileHover={{ scale: 1.05, rotate: 5 }}
-                whileTap={{ scale: 0.95 }}
-                className="w-12 h-12 rounded-lg border-2 border-orange-500/50 flex items-center justify-center overflow-hidden bg-gray-800/50 backdrop-blur-sm transition-all duration-300 hover:border-orange-500 hover:shadow-lg hover:shadow-orange-500/20"
+                className="w-40 h-40 mx-auto rounded-full border-2 border-orange-500/50 shadow-2xl flex items-center justify-center overflow-hidden relative bg-gray-800/50 backdrop-blur-sm transition-all duration-300 hover:border-orange-500 hover:shadow-lg hover:shadow-orange-500/20"
               >
                 <Image
                   src="/sayba-square-logo.png"
@@ -508,9 +518,11 @@ export default function SaybaArcLinktree() {
             <div className="flex items-center space-x-3">
               {/* Square logo for mobile header */}
               <motion.div
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.8, ease: "easeOut" }}
                 whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="w-10 h-10 rounded border-2 border-orange-500/50 flex items-center justify-center overflow-hidden bg-gray-800/50 backdrop-blur-sm transition-all duration-300 hover:border-orange-500"
+                className="w-28 h-28 mx-auto rounded-full border-2 border-orange-500/50 shadow-2xl flex items-center justify-center overflow-hidden relative bg-gray-800/50 backdrop-blur-sm transition-all duration-300 hover:border-orange-500 hover:shadow-lg hover:shadow-orange-500/20"
               >
                 <Image
                   src="/sayba-square-logo.png"
@@ -615,7 +627,8 @@ export default function SaybaArcLinktree() {
                     initial={{ opacity: 0, scale: 0.8 }}
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{ duration: 0.8, ease: "easeOut" }}
-                    className="w-40 h-40 mx-auto rounded-full border-2 border-orange-500/30 shadow-2xl flex items-center justify-center overflow-hidden relative bg-gray-800/50 backdrop-blur-sm"
+                    whileHover={{ scale: 1.05, rotate: 5 }}
+                    className="w-40 h-40 mx-auto rounded-full border-2 border-orange-500/50 shadow-2xl flex items-center justify-center overflow-hidden relative bg-gray-800/50 backdrop-blur-sm transition-all duration-300 hover:border-orange-500 hover:shadow-lg hover:shadow-orange-500/20"
                   >
                     <Image
                       src="/sayba-square-logo.png"
@@ -632,8 +645,20 @@ export default function SaybaArcLinktree() {
                   transition={{ delay: 0.3, duration: 0.6 }}
                   className="space-y-6"
                 >
-                  <h1 className="text-5xl font-light text-white tracking-wide">{t("sayba.arc")}</h1>
-                  <p className="text-2xl text-orange-400 font-light tracking-wider">{t("art.you.believe")}</p>
+                  <div className="relative h-16 flex items-center justify-center">
+                    <motion.h1
+                      key={showAlternateText ? "alt" : "main"}
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -10 }}
+                      transition={{ duration: 0.5 }}
+                      className={`text-5xl font-light tracking-wide absolute ${
+                        showAlternateText ? "text-orange-400 font-medium" : "text-white"
+                      }`}
+                    >
+                      {showAlternateText ? t("art.you.believe") : t("sayba.arc")}
+                    </motion.h1>
+                  </div>
                   <div className="w-24 h-px bg-gradient-to-r from-transparent via-orange-500 to-transparent mx-auto"></div>
                   <p className="text-gray-400 max-w-2xl mx-auto leading-relaxed text-lg font-light">
                     {t("hero.description")}
@@ -713,7 +738,8 @@ export default function SaybaArcLinktree() {
                   initial={{ opacity: 0, scale: 0.8 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ duration: 0.8, ease: "easeOut" }}
-                  className="w-28 h-28 mx-auto rounded-full border-2 border-orange-500/30 shadow-2xl flex items-center justify-center overflow-hidden relative bg-gray-800/50 backdrop-blur-sm"
+                  whileHover={{ scale: 1.05 }}
+                  className="w-28 h-28 mx-auto rounded-full border-2 border-orange-500/50 shadow-2xl flex items-center justify-center overflow-hidden relative bg-gray-800/50 backdrop-blur-sm transition-all duration-300 hover:border-orange-500 hover:shadow-lg hover:shadow-orange-500/20"
                 >
                   <Image
                     src="/sayba-square-logo.png"
@@ -730,8 +756,20 @@ export default function SaybaArcLinktree() {
                 transition={{ delay: 0.3, duration: 0.6 }}
                 className="space-y-4"
               >
-                <h1 className="text-3xl font-light text-white tracking-wide">{t("sayba.arc")}</h1>
-                <p className="text-lg text-orange-400 font-light tracking-wider">{t("art.you.believe")}</p>
+                <div className="relative h-12 flex items-center justify-center">
+                  <motion.h1
+                    key={showAlternateText ? "alt-mobile" : "main-mobile"}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    transition={{ duration: 0.5 }}
+                    className={`text-3xl font-light tracking-wide absolute ${
+                      showAlternateText ? "text-orange-400 font-medium" : "text-white"
+                    }`}
+                  >
+                    {showAlternateText ? t("art.you.believe") : t("sayba.arc")}
+                  </motion.h1>
+                </div>
                 <div className="w-16 h-px bg-gradient-to-r from-transparent via-orange-500 to-transparent mx-auto"></div>
                 <p className="text-gray-400 text-sm leading-relaxed font-light px-4">{t("hero.mobile.description")}</p>
               </motion.div>
@@ -1006,8 +1044,8 @@ export default function SaybaArcLinktree() {
                 <div className="grid grid-cols-2 gap-4 text-sm">
                   <div>
                     <span className="text-gray-400">{t("price.from")}</span>
-                    <p className="text-orange-400 font-semibold">
-                      Mulai dari {selectedProduct.details?.pricing || "Hubungi untuk quote"}
+                    <p className="text-orange-400 font-semibold text-lg">
+                      {selectedProduct.details?.pricing || "Hubungi untuk quote"}
                     </p>
                   </div>
                   <div>
