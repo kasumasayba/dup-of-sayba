@@ -1,19 +1,30 @@
 "use client"
 
 import type React from "react"
-import { useState, useRef } from "react"
+
+import { useState, useEffect } from "react"
+import { motion, AnimatePresence } from "framer-motion"
+import { ChevronLeft, ChevronRight, Play, Pause } from "lucide-react"
 import Image from "next/image"
-import { ChevronLeft, ChevronRight } from "lucide-react"
-import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
-import { useAudioFeedback } from "@/hooks/useAudioFeedback"
+import { Button } from "@/components/ui/button"
 import { useLanguage } from "@/hooks/useLanguage"
+import { useAudioFeedback } from "@/hooks/useAudioFeedback"
 
 interface Product {
   id: number
   titleKey: string
   subtitleKey: string
+  descriptionKey: string
+  icon: React.ReactNode
   image: string
+  bgColor: string
+  link: string
+  details: {
+    features: string[]
+    pricing: string
+    delivery: string
+  }
 }
 
 interface ProductCarouselPagesProps {
@@ -31,230 +42,165 @@ export function ProductCarouselPages({
   onProductClick,
   isAutoPlaying,
 }: ProductCarouselPagesProps) {
-  const [isTransitioning, setIsTransitioning] = useState(false)
-  const touchStartX = useRef<number>(0)
-  const touchEndX = useRef<number>(0)
-  const { playSwipe, playHover, playClick } = useAudioFeedback()
+  const [isPlaying, setIsPlaying] = useState(isAutoPlaying)
   const { t } = useLanguage()
+  const { playClick, playSwipe, playHover } = useAudioFeedback()
+
+  useEffect(() => {
+    setIsPlaying(isAutoPlaying)
+  }, [isAutoPlaying])
 
   const nextSlide = () => {
-    if (isTransitioning) return
-    setIsTransitioning(true)
-    onSlideChange((currentSlide + 1) % products.length)
+    const nextIndex = (currentSlide + 1) % products.length
+    onSlideChange(nextIndex)
     playSwipe()
-    setTimeout(() => setIsTransitioning(false), 400)
   }
 
   const prevSlide = () => {
-    if (isTransitioning) return
-    setIsTransitioning(true)
-    onSlideChange((currentSlide - 1 + products.length) % products.length)
+    const prevIndex = (currentSlide - 1 + products.length) % products.length
+    onSlideChange(prevIndex)
     playSwipe()
-    setTimeout(() => setIsTransitioning(false), 400)
   }
 
   const goToSlide = (index: number) => {
-    if (isTransitioning || index === currentSlide) return
-    setIsTransitioning(true)
     onSlideChange(index)
     playClick()
-    setTimeout(() => setIsTransitioning(false), 400)
   }
 
-  // Touch handlers
-  const handleTouchStart = (e: React.TouchEvent) => {
-    touchStartX.current = e.targetTouches[0].clientX
+  const toggleAutoPlay = () => {
+    setIsPlaying(!isPlaying)
+    playClick()
   }
 
-  const handleTouchMove = (e: React.TouchEvent) => {
-    touchEndX.current = e.targetTouches[0].clientX
+  const handleProductClick = (product: Product) => {
+    onProductClick(product)
+    playClick()
   }
 
-  const handleTouchEnd = () => {
-    if (!touchStartX.current || !touchEndX.current) return
-
-    const distance = touchStartX.current - touchEndX.current
-    const isLeftSwipe = distance > 50
-    const isRightSwipe = distance < -50
-
-    if (isLeftSwipe) {
-      nextSlide()
-    }
-    if (isRightSwipe) {
-      prevSlide()
-    }
-  }
+  const currentProduct = products[currentSlide]
 
   return (
     <div className="relative w-full">
-      {/* Desktop Layout */}
-      <div className="hidden lg:block">
-        <div className="relative overflow-hidden rounded-2xl">
-          <div
-            className="flex transition-transform duration-400 ease-out"
-            style={{ transform: `translateX(-${currentSlide * 100}%)` }}
-            onTouchStart={handleTouchStart}
-            onTouchMove={handleTouchMove}
-            onTouchEnd={handleTouchEnd}
+      {/* Main Product Display */}
+      <div className="relative mb-8">
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={currentSlide}
+            initial={{ opacity: 0, x: 50 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -50 }}
+            transition={{ duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94] }}
+            className="w-full"
           >
-            {products.map((product, index) => (
-              <div key={product.id} className="w-full flex-shrink-0 px-4">
-                <Card className="bg-gray-800 border-gray-700 hover:bg-gray-750 transition-all duration-300 hover:scale-[1.02] shadow-xl product-card-border cursor-pointer">
-                  <button
-                    onClick={() => onProductClick(product)}
-                    onMouseEnter={playHover}
-                    className="w-full group p-0 bg-transparent border-none"
-                    disabled={isTransitioning}
-                  >
-                    <CardContent className="p-8">
-                      <div className="flex items-center space-x-8">
-                        {/* Product Image - 1:1 Aspect Ratio */}
-                        <div className="w-80 h-80 rounded-2xl overflow-hidden shadow-2xl transition-all duration-300 relative">
-                          <Image
-                            src={product.image || "/placeholder.svg"}
-                            alt={t(product.titleKey)}
-                            width={320}
-                            height={320}
-                            className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-                          />
-                        </div>
+            <Card className="bg-gray-700/30 backdrop-blur-sm border-gray-600/50 overflow-hidden hover:shadow-xl transition-all duration-500 hover:shadow-orange-500/10">
+              <CardContent className="p-0">
+                <div className="grid lg:grid-cols-2 gap-0">
+                  {/* Product Image */}
+                  <div className="relative aspect-square lg:aspect-auto lg:h-80 overflow-hidden">
+                    <Image
+                      src={currentProduct.image || "/placeholder.svg"}
+                      alt={t(currentProduct.titleKey)}
+                      fill
+                      className="object-cover transition-transform duration-700 hover:scale-105"
+                    />
+                    <div className={`absolute inset-0 ${currentProduct.bgColor} opacity-20`} />
+                  </div>
 
-                        {/* Product Info */}
-                        <div className="flex-1 text-left">
-                          <div className="bg-gray-700 rounded-xl p-6 h-full flex flex-col justify-center">
-                            <h3 className="text-4xl font-bold text-white group-hover:text-orange-400 transition-colors mb-4">
-                              {t(product.titleKey)}
-                            </h3>
-                            <p className="text-2xl text-orange-400 font-medium mb-6">{t(product.subtitleKey)}</p>
-                            <div className="bg-gray-600 rounded-lg p-4">
-                              <p className="text-gray-300 text-lg leading-relaxed">
-                                {t(`${product.titleKey.replace(/\./g, ".")}.description`)}
-                              </p>
-                            </div>
-                          </div>
-                        </div>
+                  {/* Product Info */}
+                  <div className="p-6 lg:p-8 flex flex-col justify-center">
+                    <div className="mb-4">
+                      <div className={`inline-flex p-3 rounded-xl ${currentProduct.bgColor} mb-4`}>
+                        {currentProduct.icon}
                       </div>
-                    </CardContent>
-                  </button>
-                </Card>
-              </div>
-            ))}
-          </div>
+                      <h3 className="text-2xl font-bold text-white mb-2">{t(currentProduct.titleKey)}</h3>
+                      <p className="text-orange-400 font-medium mb-4">{t(currentProduct.subtitleKey)}</p>
+                      <p className="text-gray-300 leading-relaxed mb-6">{t(currentProduct.descriptionKey)}</p>
+                    </div>
 
-          {/* Desktop Navigation Buttons */}
-          <div className="absolute left-4 top-1/2 transform -translate-y-1/2 z-10">
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={prevSlide}
-              onMouseEnter={playHover}
-              disabled={isTransitioning}
-              className="w-14 h-14 bg-gray-900/90 backdrop-blur-sm border-2 border-gray-600 text-white hover:bg-orange-500/20 hover:border-orange-500 hover:text-orange-400 transition-all duration-300 rounded-full button-glow-bg disabled:opacity-50 glow-hover shadow-xl"
-            >
-              <ChevronLeft className="h-7 w-7" />
-            </Button>
-          </div>
+                    <div className="space-y-4">
+                      <div className="flex items-center justify-between text-sm">
+                        <span className="text-gray-400">Harga mulai dari:</span>
+                        <span className="text-orange-400 font-semibold">{currentProduct.details.pricing}</span>
+                      </div>
+                      <div className="flex items-center justify-between text-sm">
+                        <span className="text-gray-400">Waktu pengerjaan:</span>
+                        <span className="text-white">{currentProduct.details.delivery}</span>
+                      </div>
+                    </div>
 
-          <div className="absolute right-4 top-1/2 transform -translate-y-1/2 z-10">
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={nextSlide}
-              onMouseEnter={playHover}
-              disabled={isTransitioning}
-              className="w-14 h-14 bg-gray-900/90 backdrop-blur-sm border-2 border-gray-600 text-white hover:bg-orange-500/20 hover:border-orange-500 hover:text-orange-400 transition-all duration-300 rounded-full button-glow-bg disabled:opacity-50 glow-hover shadow-xl"
-            >
-              <ChevronRight className="h-7 w-7" />
-            </Button>
-          </div>
+                    <motion.button
+                      whileHover={{ scale: 1.02, y: -2 }}
+                      whileTap={{ scale: 0.98 }}
+                      onClick={() => handleProductClick(currentProduct)}
+                      onMouseEnter={playHover}
+                      className="mt-6 w-full bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white py-3 px-6 rounded-xl font-semibold transition-all duration-300 shadow-lg hover:shadow-orange-500/30"
+                    >
+                      Lihat Detail
+                    </motion.button>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </motion.div>
+        </AnimatePresence>
+
+        {/* Navigation Buttons */}
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={prevSlide}
+          onMouseEnter={playHover}
+          className="absolute left-4 top-1/2 transform -translate-y-1/2 w-12 h-12 bg-gray-900/90 backdrop-blur-sm border border-gray-600 text-white hover:bg-orange-500/20 hover:border-orange-500 hover:text-orange-400 transition-all duration-300 rounded-full shadow-lg z-10"
+        >
+          <ChevronLeft className="h-6 w-6" />
+        </Button>
+
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={nextSlide}
+          onMouseEnter={playHover}
+          className="absolute right-4 top-1/2 transform -translate-y-1/2 w-12 h-12 bg-gray-900/90 backdrop-blur-sm border border-gray-600 text-white hover:bg-orange-500/20 hover:border-orange-500 hover:text-orange-400 transition-all duration-300 rounded-full shadow-lg z-10"
+        >
+          <ChevronRight className="h-6 w-6" />
+        </Button>
+      </div>
+
+      {/* Controls */}
+      <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center space-x-2">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={toggleAutoPlay}
+            onMouseEnter={playHover}
+            className="text-gray-400 hover:text-orange-400 transition-colors duration-300"
+          >
+            {isPlaying ? <Pause className="h-4 w-4 mr-2" /> : <Play className="h-4 w-4 mr-2" />}
+            {isPlaying ? "Pause" : "Play"}
+          </Button>
+        </div>
+
+        <div className="text-sm text-gray-400">
+          {currentSlide + 1} / {products.length}
         </div>
       </div>
 
-      {/* Mobile Layout */}
-      <div className="lg:hidden">
-        <div className="relative overflow-hidden rounded-xl">
-          <div
-            className="flex transition-transform duration-400 ease-out"
-            style={{ transform: `translateX(-${currentSlide * 100}%)` }}
-            onTouchStart={handleTouchStart}
-            onTouchMove={handleTouchMove}
-            onTouchEnd={handleTouchEnd}
-          >
-            {products.map((product, index) => (
-              <div key={product.id} className="w-full flex-shrink-0 px-2">
-                <Card className="bg-gray-800 border-gray-700 hover:bg-gray-750 transition-all duration-300 shadow-lg mobile-product-card-border cursor-pointer">
-                  <button
-                    onClick={() => onProductClick(product)}
-                    className="w-full group p-0 bg-transparent border-none"
-                    disabled={isTransitioning}
-                  >
-                    <CardContent className="p-4">
-                      {/* Mobile Product Image - 1:1 Aspect Ratio */}
-                      <div className="w-full aspect-square rounded-xl overflow-hidden shadow-lg mb-4 transition-all duration-300 relative">
-                        <Image
-                          src={product.image || "/placeholder.svg"}
-                          alt={t(product.titleKey)}
-                          width={400}
-                          height={400}
-                          className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-                        />
-                      </div>
-
-                      {/* Mobile Product Info */}
-                      <div className="bg-gray-700 rounded-lg p-5 text-center">
-                        <h3 className="text-xl font-bold text-white group-hover:text-orange-400 transition-colors mb-2">
-                          {t(product.titleKey)}
-                        </h3>
-                        <p className="text-lg text-orange-400 font-medium">{t(product.subtitleKey)}</p>
-                      </div>
-                    </CardContent>
-                  </button>
-                </Card>
-              </div>
-            ))}
-          </div>
-
-          {/* Mobile Navigation Buttons */}
-          <div className="absolute left-2 top-1/2 transform -translate-y-1/2 z-10">
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={prevSlide}
-              disabled={isTransitioning}
-              className="w-12 h-12 bg-gray-900/90 backdrop-blur-sm border-2 border-gray-600 text-white hover:bg-orange-500/20 hover:border-orange-500 hover:text-orange-400 transition-all duration-300 rounded-full button-glow-bg disabled:opacity-50 shadow-lg"
-            >
-              <ChevronLeft className="h-5 w-5" />
-            </Button>
-          </div>
-
-          <div className="absolute right-2 top-1/2 transform -translate-y-1/2 z-10">
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={nextSlide}
-              disabled={isTransitioning}
-              className="w-12 h-12 bg-gray-900/90 backdrop-blur-sm border-2 border-gray-600 text-white hover:bg-orange-500/20 hover:border-orange-500 hover:text-orange-400 transition-all duration-300 rounded-full button-glow-bg disabled:opacity-50 shadow-lg"
-            >
-              <ChevronRight className="h-5 w-5" />
-            </Button>
-          </div>
-        </div>
-      </div>
-
-      {/* Page Indicators */}
-      <div className="flex justify-center space-x-3 mt-6">
+      {/* Slide Indicators - Much smaller without shadows */}
+      <div className="flex justify-center space-x-1.5">
         {products.map((_, index) => (
-          <button
+          <motion.button
             key={index}
             onClick={() => goToSlide(index)}
             onMouseEnter={playHover}
-            disabled={isTransitioning}
-            className={`w-3 h-3 rounded-full transition-all duration-300 glow-hover interactive-scale disabled:opacity-50 ${
-              currentSlide === index
-                ? "bg-orange-500 scale-125 shadow-lg shadow-orange-500/50"
-                : "bg-gray-600 hover:bg-gray-500"
+            whileHover={{ scale: 1.3 }}
+            whileTap={{ scale: 0.8 }}
+            className={`w-1.5 h-1.5 rounded-full transition-all duration-300 min-h-[32px] min-w-[32px] flex items-center justify-center touch-manipulation ${
+              currentSlide === index ? "bg-orange-500" : "bg-gray-600 hover:bg-gray-500"
             }`}
-          />
+          >
+            <div className={`w-1.5 h-1.5 rounded-full ${currentSlide === index ? "bg-orange-500" : "bg-gray-600"}`} />
+          </motion.button>
         ))}
       </div>
     </div>

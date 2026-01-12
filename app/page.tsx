@@ -2,6 +2,7 @@
 import Image from "next/image"
 import type React from "react"
 import { ChevronLeft, ChevronRight } from "lucide-react"
+import { motion, useInView } from "framer-motion"
 
 import { useState, useEffect, useRef } from "react"
 import {
@@ -25,7 +26,6 @@ import {
   Map,
 } from "lucide-react"
 import { Card, CardContent } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
 import { useAudioFeedback } from "@/hooks/useAudioFeedback"
 import { useLanguage } from "@/hooks/useLanguage"
 import { AudioToggle } from "@/components/AudioToggle"
@@ -53,7 +53,7 @@ const products = [
         "Revisi unlimited hingga puas",
         "Pengerjaan cepat dan tepat waktu",
       ],
-      pricing: "Mulai dari Rp 25.000",
+      pricing: "Rp 25.000",
       delivery: "1-3 hari kerja",
     },
   },
@@ -75,7 +75,7 @@ const products = [
         "Custom tweaking sesuai kebutuhan",
         "Support dan maintenance",
       ],
-      pricing: "Mulai dari Rp 50.000",
+      pricing: "Rp 50.000",
       delivery: "1-5 hari kerja",
     },
   },
@@ -97,7 +97,7 @@ const products = [
         "Troubleshooting masalah software",
         "Konsultasi pemilihan software",
       ],
-      pricing: "Mulai dari Rp 30.000",
+      pricing: "Rp 30.000",
       delivery: "1-2 hari kerja",
     },
   },
@@ -119,7 +119,7 @@ const products = [
         "E-commerce integration",
         "Maintenance dan support",
       ],
-      pricing: "Mulai dari Rp 500.000",
+      pricing: "Rp 500.000",
       delivery: "7-14 hari kerja",
     },
   },
@@ -141,7 +141,7 @@ const products = [
         "Backend API integration",
         "App maintenance dan updates",
       ],
-      pricing: "Mulai dari Rp 2.000.000",
+      pricing: "Rp 2.000.000",
       delivery: "14-30 hari kerja",
     },
   },
@@ -163,7 +163,7 @@ const products = [
         "Packaging design",
         "Brand guidelines development",
       ],
-      pricing: "Mulai dari Rp 100.000",
+      pricing: "Rp 100.000",
       delivery: "3-7 hari kerja",
     },
   },
@@ -185,7 +185,7 @@ const products = [
         "Revisi dan modifikasi gambar",
         "Konsultasi desain teknis",
       ],
-      pricing: "Mulai dari Rp 75.000",
+      pricing: "Rp 75.000",
       delivery: "2-5 hari kerja",
     },
   },
@@ -207,7 +207,7 @@ const products = [
         "Database spasial management",
         "Konsultasi sistem informasi geografis",
       ],
-      pricing: "Mulai dari Rp 150.000",
+      pricing: "Rp 150.000",
       delivery: "3-7 hari kerja",
     },
   },
@@ -244,6 +244,79 @@ const socialLinks = [
   },
 ]
 
+// Animation variants - Enhanced for professional smoothness
+const fadeInUp = {
+  initial: { opacity: 0, y: 30 },
+  animate: { opacity: 1, y: 0 },
+  transition: { duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] },
+}
+
+const fadeInLeft = {
+  initial: { opacity: 0, x: -30 },
+  animate: { opacity: 1, x: 0 },
+  transition: { duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] },
+}
+
+const fadeInRight = {
+  initial: { opacity: 0, x: 30 },
+  animate: { opacity: 1, x: 0 },
+  transition: { duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] },
+}
+
+const fadeIn = {
+  initial: { opacity: 0 },
+  animate: { opacity: 1 },
+  transition: { duration: 0.8, ease: [0.25, 0.46, 0.45, 0.94] },
+}
+
+const staggerContainer = {
+  animate: {
+    transition: {
+      staggerChildren: 0.15,
+    },
+  },
+}
+
+const scaleOnHover = {
+  whileHover: {
+    scale: 1.02,
+    y: -2,
+    transition: { duration: 0.3, ease: [0.25, 0.46, 0.45, 0.94] },
+  },
+  whileTap: {
+    scale: 0.98,
+    transition: { duration: 0.1 },
+  },
+}
+
+const AnimatedSection = ({
+  children,
+  className = "",
+  variant = fadeInUp,
+  delay = 0,
+}: {
+  children: React.ReactNode
+  className?: string
+  variant?: any
+  delay?: number
+}) => {
+  const ref = useRef(null)
+  const isInView = useInView(ref, { once: true, margin: "-50px" })
+
+  return (
+    <motion.div
+      ref={ref}
+      initial="initial"
+      animate={isInView ? "animate" : "initial"}
+      variants={variant}
+      transition={{ ...variant.transition, delay }}
+      className={className}
+    >
+      {children}
+    </motion.div>
+  )
+}
+
 export default function SaybaArcLinktree() {
   const [currentSlide, setCurrentSlide] = useState(0)
   const [modalSlide, setModalSlide] = useState(0)
@@ -253,9 +326,6 @@ export default function SaybaArcLinktree() {
   const [isAutoPlaying, setIsAutoPlaying] = useState(true)
   const [isLoading, setIsLoading] = useState(true)
   const [showContent, setShowContent] = useState(false)
-
-  const modalTouchStartX = useRef<number>(0)
-  const modalTouchEndX = useRef<number>(0)
 
   // Hooks
   const { audioEnabled, toggleAudio, playClick, playSwipe, playModal, playHover, playSuccess } = useAudioFeedback()
@@ -334,30 +404,6 @@ export default function SaybaArcLinktree() {
     playSwipe()
   }
 
-  // Touch handlers for modal slider
-  const handleModalTouchStart = (e: React.TouchEvent) => {
-    modalTouchStartX.current = e.targetTouches[0].clientX
-  }
-
-  const handleModalTouchMove = (e: React.TouchEvent) => {
-    modalTouchEndX.current = e.targetTouches[0].clientX
-  }
-
-  const handleModalTouchEnd = () => {
-    if (!modalTouchStartX.current || !modalTouchEndX.current) return
-
-    const distance = modalTouchStartX.current - modalTouchEndX.current
-    const isLeftSwipe = distance > 50
-    const isRightSwipe = distance < -50
-
-    if (isLeftSwipe) {
-      nextModalSlide()
-    }
-    if (isRightSwipe) {
-      prevModalSlide()
-    }
-  }
-
   const openProductModal = (product: (typeof products)[0]) => {
     setSelectedProduct(product)
     setModalSlide(product.id - 1)
@@ -402,19 +448,35 @@ export default function SaybaArcLinktree() {
 
   return (
     <div
-      className={`min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 transition-opacity duration-1000 ${showContent ? "opacity-100" : "opacity-0"}`}
+      className={`min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 transition-opacity duration-1000 overflow-x-hidden ${showContent ? "opacity-100" : "opacity-0"}`}
     >
       {/* Backdrop blur when social menu is open */}
       {socialMenuOpen && (
-        <div className="fixed inset-0 bg-black/20 backdrop-blur-sm z-40" onClick={() => setSocialMenuOpen(false)} />
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className="fixed inset-0 bg-black/20 backdrop-blur-sm z-40"
+          onClick={() => setSocialMenuOpen(false)}
+        />
       )}
 
       {/* Desktop Navigation */}
-      <nav className="hidden lg:block fixed top-0 left-0 right-0 z-50 bg-gray-900/95 backdrop-blur-sm border-b border-gray-700">
+      <motion.nav
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6 }}
+        className="hidden lg:block fixed top-0 left-0 right-0 z-50 bg-gray-900/95 backdrop-blur-sm border-b border-gray-700"
+      >
         <div className="container mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
-              <div className="w-12 h-12 rounded-lg border-2 border-orange-500 flex items-center justify-center overflow-hidden glow-hover interactive-scale">
+              {/* Square logo for header */}
+              <motion.div
+                whileHover={{ scale: 1.05, rotate: 5 }}
+                whileTap={{ scale: 0.95 }}
+                className="w-12 h-12 rounded-lg border-2 border-orange-500/50 flex items-center justify-center overflow-hidden bg-gray-800/50 backdrop-blur-sm transition-all duration-300 hover:border-orange-500 hover:shadow-lg hover:shadow-orange-500/20"
+              >
                 <Image
                   src="/sayba-square-logo.png"
                   alt="Sayba Arc Logo"
@@ -422,8 +484,8 @@ export default function SaybaArcLinktree() {
                   height={48}
                   className="w-full h-full object-cover"
                 />
-              </div>
-              <h1 className="text-xl font-bold text-white">{t("sayba.arc")}</h1>
+              </motion.div>
+              <h1 className="text-xl font-bold text-white">Art You Believe</h1>
             </div>
             <div className="flex items-center space-x-3">
               <SearchBar onSearch={handleSearch} onProductSelect={handleProductSelect} products={products} />
@@ -432,23 +494,33 @@ export default function SaybaArcLinktree() {
             </div>
           </div>
         </div>
-      </nav>
+      </motion.nav>
 
       {/* Mobile Navigation */}
-      <nav className="lg:hidden fixed top-0 left-0 right-0 z-50 bg-gray-900/95 backdrop-blur-sm border-b border-gray-700">
+      <motion.nav
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6 }}
+        className="lg:hidden fixed top-0 left-0 right-0 z-50 bg-gray-900/95 backdrop-blur-sm border-b border-gray-700"
+      >
         <div className="px-4 py-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 rounded-full border-2 border-orange-500 flex items-center justify-center overflow-hidden glow-hover interactive-scale">
+              {/* Square logo for mobile header */}
+              <motion.div
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="w-10 h-10 rounded border-2 border-orange-500/50 flex items-center justify-center overflow-hidden bg-gray-800/50 backdrop-blur-sm transition-all duration-300 hover:border-orange-500"
+              >
                 <Image
                   src="/sayba-square-logo.png"
                   alt="Sayba Arc Logo"
                   width={40}
                   height={40}
-                  className="w-full h-full object-cover rounded-full"
+                  className="w-full h-full object-cover"
                 />
-              </div>
-              <h1 className="text-lg font-bold text-white">{t("sayba.arc")}</h1>
+              </motion.div>
+              <h1 className="text-lg font-bold text-white">Art You Believe</h1>
             </div>
             <div className="flex items-center space-x-2">
               <SearchBar onSearch={handleSearch} onProductSelect={handleProductSelect} products={products} />
@@ -457,80 +529,136 @@ export default function SaybaArcLinktree() {
             </div>
           </div>
         </div>
-      </nav>
+      </motion.nav>
 
-      {/* Floating Social Media Chat */}
+      {/* Enhanced Floating Social Media Chat */}
       <div className="fixed bottom-6 right-6 z-50">
         <div className="relative">
-          {/* Social Media Options */}
+          {/* Social Media Options with enhanced animations */}
           <div
-            className={`absolute bottom-20 right-0 space-y-3 transition-all duration-500 ${
-              socialMenuOpen ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8 pointer-events-none"
+            className={`absolute bottom-20 right-0 space-y-3 transition-all duration-700 ease-out ${
+              socialMenuOpen
+                ? "opacity-100 translate-y-0 scale-100"
+                : "opacity-0 translate-y-8 scale-95 pointer-events-none"
             }`}
           >
             {socialLinks.map((social, index) => (
-              <div
+              <motion.div
                 key={index}
-                className="flex items-center justify-end space-x-3 animate-slide-up"
-                style={{ animationDelay: `${index * 100}ms` }}
+                initial={{ opacity: 0, x: 20, scale: 0.8 }}
+                animate={{
+                  opacity: socialMenuOpen ? 1 : 0,
+                  x: socialMenuOpen ? 0 : 20,
+                  scale: socialMenuOpen ? 1 : 0.8,
+                }}
+                transition={{
+                  delay: index * 0.1,
+                  duration: 0.5,
+                  ease: [0.25, 0.46, 0.45, 0.94],
+                }}
+                className="flex items-center justify-end space-x-3"
               >
-                <span className="bg-gray-800/90 backdrop-blur-sm text-white px-3 py-2 rounded-lg text-sm whitespace-nowrap border border-gray-600">
+                <motion.span
+                  whileHover={{ scale: 1.05, x: -5 }}
+                  className="bg-gray-800/90 backdrop-blur-sm text-white px-3 py-2 rounded-lg text-sm whitespace-nowrap border border-gray-600 shadow-lg"
+                >
                   {social.label}
-                </span>
-                <a
+                </motion.span>
+                <motion.a
                   href={social.link}
                   target="_blank"
                   rel="noopener noreferrer"
                   onClick={handleLinkClick}
                   onMouseEnter={playHover}
-                  className={`w-12 h-12 ${social.color} rounded-full flex items-center justify-center text-white shadow-lg glow-hover interactive-scale`}
+                  whileHover={{
+                    scale: 1.1,
+                    rotate: 5,
+                    boxShadow: "0 0 25px rgba(249, 115, 22, 0.4)",
+                  }}
+                  whileTap={{ scale: 0.95 }}
+                  className={`w-12 h-12 ${social.color} rounded-full flex items-center justify-center text-white shadow-lg transition-all duration-300`}
                 >
                   {social.icon}
-                </a>
-              </div>
+                </motion.a>
+              </motion.div>
             ))}
           </div>
 
-          {/* Main Chat Button */}
-          <button
+          {/* Enhanced Main Chat Button */}
+          <motion.button
+            whileHover={{
+              scale: 1.1,
+              boxShadow: "0 0 30px rgba(249, 115, 22, 0.5)",
+            }}
+            whileTap={{ scale: 0.95 }}
             onClick={handleSocialToggle}
             onMouseEnter={playHover}
-            className="w-16 h-16 bg-gradient-to-r from-orange-500 to-orange-600 rounded-full flex items-center justify-center text-white shadow-lg glow-hover interactive-scale"
+            className="w-16 h-16 bg-gradient-to-r from-orange-500 to-orange-600 rounded-full flex items-center justify-center text-white shadow-lg transition-all duration-300 hover:shadow-orange-500/30"
           >
-            {socialMenuOpen ? <X className="h-6 w-6" /> : <MessageSquare className="h-6 w-6" />}
-          </button>
+            <motion.div animate={{ rotate: socialMenuOpen ? 180 : 0 }} transition={{ duration: 0.3 }}>
+              {socialMenuOpen ? <X className="h-6 w-6" /> : <MessageSquare className="h-6 w-6" />}
+            </motion.div>
+          </motion.button>
         </div>
       </div>
 
       {/* Main Content */}
-      <div className="pt-16 lg:pt-20 pb-32">
-        <div className="container mx-auto px-4 lg:px-8 py-8">
+      <div className="pt-16 lg:pt-20 pb-32 w-full max-w-full overflow-x-hidden">
+        <div className="container mx-auto px-4 lg:px-8 py-8 max-w-full">
           {/* Desktop Layout */}
           <div className="hidden lg:block">
             <div className="max-w-7xl mx-auto">
-              {/* Hero Section */}
-              <div className="text-center mb-12">
-                <div className="mb-8">
-                  <div className="w-48 h-48 mx-auto rounded-full border-4 border-orange-500 shadow-2xl flex items-center justify-center overflow-hidden relative glow-hover interactive-scale">
+              {/* Hero Section - Full circular logo with hover effects */}
+              <AnimatedSection className="text-center mb-16">
+                <div className="mb-12">
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    whileHover={{ scale: 1.05, rotate: -5 }}
+                    whileTap={{ scale: 0.95 }}
+                    transition={{ duration: 0.8, ease: "easeOut" }}
+                    className="w-40 h-40 mx-auto rounded-full border-2 border-orange-500/30 shadow-2xl flex items-center justify-center overflow-hidden relative bg-gray-800/50 backdrop-blur-sm transition-all duration-300 hover:border-orange-500 hover:shadow-lg hover:shadow-orange-500/20 cursor-pointer"
+                  >
                     <Image
                       src="/sayba-square-logo.png"
                       alt="Sayba Arc - Art You Believe"
-                      width={192}
-                      height={192}
+                      width={160}
+                      height={160}
                       className="w-full h-full object-cover rounded-full"
                     />
-                  </div>
+                  </motion.div>
                 </div>
-                <h1 className="text-4xl font-bold text-white mb-4">{t("sayba.arc")}</h1>
-                <p className="text-xl text-gray-300 mb-4">{t("art.you.believe")}</p>
-                <p className="text-gray-400 max-w-2xl mx-auto leading-relaxed">{t("hero.description")}</p>
-              </div>
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.3, duration: 0.6 }}
+                  className="space-y-6"
+                >
+                  <h1 className="text-5xl font-bold text-white tracking-wide">
+                    <span className="font-light">Sayba</span>{" "}
+                    <span className="font-bold bg-gradient-to-r from-orange-400 to-orange-600 bg-clip-text text-transparent">
+                      Arc
+                    </span>
+                  </h1>
+                  <div className="w-24 h-px bg-gradient-to-r from-transparent via-orange-500 to-transparent mx-auto"></div>
+                  <p className="text-gray-400 max-w-3xl mx-auto leading-relaxed text-lg font-light">
+                    Sayba Arc adalah platform kreatif terdepan yang menghadirkan solusi digital inovatif untuk bisnis
+                    dan individu. Kami menyediakan layanan desain grafis profesional, pengembangan website modern,
+                    aplikasi mobile, jasa penyelesaian tugas akademik, dan berbagai layanan teknologi lainnya. Dengan
+                    tim ahli berpengalaman dan komitmen terhadap kualitas, Sayba Arc membantu mewujudkan visi kreatif
+                    Anda menjadi kenyataan. Bergabunglah dengan ribuan klien yang telah mempercayai kami untuk
+                    mengembangkan proyek mereka dengan standar internasional dan harga yang kompetitif.
+                  </p>
+                </motion.div>
+              </AnimatedSection>
 
               {/* Main Links Grid */}
-              <div className="grid md:grid-cols-2 gap-6 mb-12">
+              <AnimatedSection variant={staggerContainer} className="grid md:grid-cols-2 gap-6 mb-16">
                 {mainLinks.map((link, index) => (
-                  <a
+                  <motion.a
                     key={index}
+                    variants={fadeInUp}
+                    {...scaleOnHover}
                     href={link.link}
                     target="_blank"
                     rel="noopener noreferrer"
@@ -538,34 +666,145 @@ export default function SaybaArcLinktree() {
                     onClick={handleLinkClick}
                     onMouseEnter={playHover}
                   >
-                    <Card className="bg-gray-800 border-gray-700 hover:bg-gray-750 transition-all duration-300 hover:scale-[1.02] hover:shadow-xl h-full glow-hover interactive-scale shadow-lg">
+                    <Card className="bg-gray-800/50 backdrop-blur-sm border-gray-700/50 hover:bg-gray-750/50 transition-all duration-500 h-full shadow-lg hover:shadow-xl hover:shadow-orange-500/10 hover:border-orange-500/30">
                       <CardContent className="p-6">
                         <div className="flex items-center space-x-4">
-                          <div
-                            className={`w-16 h-16 ${link.bgColor} rounded-xl flex items-center justify-center text-white shadow-lg glow-hover`}
+                          <motion.div
+                            whileHover={{ scale: 1.1, rotate: 5 }}
+                            className={`w-16 h-16 ${link.bgColor} rounded-xl flex items-center justify-center text-white shadow-lg transition-all duration-300`}
                           >
                             {link.icon}
-                          </div>
+                          </motion.div>
                           <div className="flex-1">
-                            <h3 className="text-xl font-semibold text-white group-hover:text-orange-400 transition-colors mb-2">
+                            <h3 className="text-xl font-semibold text-white group-hover:text-orange-400 transition-colors duration-300 mb-2">
                               {t(link.titleKey)}
                             </h3>
-                            <p className="text-gray-400">{t(link.descriptionKey)}</p>
+                            <p className="text-gray-400 group-hover:text-gray-300 transition-colors duration-300">
+                              {t(link.descriptionKey)}
+                            </p>
                           </div>
-                          <ExternalLink className="h-6 w-6 text-gray-400 group-hover:text-orange-400 transition-colors" />
+                          <motion.div whileHover={{ scale: 1.2, x: 5 }} transition={{ duration: 0.2 }}>
+                            <ExternalLink className="h-6 w-6 text-gray-400 group-hover:text-orange-400 transition-colors duration-300" />
+                          </motion.div>
                         </div>
                       </CardContent>
                     </Card>
-                  </a>
+                  </motion.a>
                 ))}
-              </div>
+              </AnimatedSection>
 
               {/* Product Pages Carousel */}
-              <Card className="bg-gray-800 border-gray-700 mb-12 glow-hover shadow-xl">
-                <CardContent className="p-8">
-                  <div className="text-center mb-8">
-                    <h2 className="text-3xl font-semibold text-white mb-4">{t("explore.collection")}</h2>
-                    <p className="text-gray-400">{t("collection.subtitle")}</p>
+              <AnimatedSection>
+                <Card className="bg-gray-800/50 backdrop-blur-sm border-gray-700/50 mb-12 shadow-xl hover:shadow-2xl transition-all duration-500">
+                  <CardContent className="p-8">
+                    <div className="text-center mb-8">
+                      <h2 className="text-3xl font-light text-white mb-4">{t("explore.collection")}</h2>
+                      <p className="text-gray-400 font-light">{t("collection.subtitle")}</p>
+                    </div>
+
+                    <ProductCarouselPages
+                      products={products}
+                      currentSlide={currentSlide}
+                      onSlideChange={setCurrentSlide}
+                      onProductClick={openProductModal}
+                      isAutoPlaying={isAutoPlaying}
+                    />
+                  </CardContent>
+                </Card>
+              </AnimatedSection>
+            </div>
+          </div>
+
+          {/* Mobile Layout */}
+          <div className="lg:hidden w-full max-w-sm mx-auto">
+            {/* Mobile Hero - Full circular logo with hover effects */}
+            <AnimatedSection className="text-center mb-12">
+              <div className="mb-8">
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  whileHover={{ scale: 1.05, rotate: -5 }}
+                  whileTap={{ scale: 0.95 }}
+                  transition={{ duration: 0.8, ease: "easeOut" }}
+                  className="w-28 h-28 mx-auto rounded-full border-2 border-orange-500/30 shadow-2xl flex items-center justify-center overflow-hidden relative bg-gray-800/50 backdrop-blur-sm transition-all duration-300 hover:border-orange-500 hover:shadow-lg hover:shadow-orange-500/20 cursor-pointer"
+                >
+                  <Image
+                    src="/sayba-square-logo.png"
+                    alt="Sayba Arc - Art You Believe"
+                    width={112}
+                    height={112}
+                    className="w-full h-full object-cover rounded-full"
+                  />
+                </motion.div>
+              </div>
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.3, duration: 0.6 }}
+                className="space-y-4"
+              >
+                <h1 className="text-3xl font-bold text-white tracking-wide">
+                  <span className="font-light">Sayba</span>{" "}
+                  <span className="font-bold bg-gradient-to-r from-orange-400 to-orange-600 bg-clip-text text-transparent">
+                    Arc
+                  </span>
+                </h1>
+                <div className="w-16 h-px bg-gradient-to-r from-transparent via-orange-500 to-transparent mx-auto"></div>
+                <p className="text-gray-400 text-sm leading-relaxed font-light px-4">
+                  Platform kreatif terdepan yang menghadirkan solusi digital inovatif. Kami menyediakan layanan desain
+                  grafis, pengembangan website, aplikasi mobile, dan berbagai layanan teknologi lainnya dengan standar
+                  profesional dan harga kompetitif untuk membantu mewujudkan visi kreatif Anda.
+                </p>
+              </motion.div>
+            </AnimatedSection>
+
+            {/* Mobile Main Links */}
+            <AnimatedSection variant={staggerContainer} className="space-y-4 mb-12 px-2">
+              {mainLinks.map((link, index) => (
+                <motion.a
+                  key={index}
+                  variants={fadeInUp}
+                  {...scaleOnHover}
+                  href={link.link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="block group min-h-[60px] touch-manipulation"
+                  onClick={handleLinkClick}
+                >
+                  <Card className="bg-gray-800/50 backdrop-blur-sm border-gray-700/50 hover:bg-gray-750/50 transition-all duration-500 shadow-lg hover:shadow-xl hover:shadow-orange-500/10">
+                    <CardContent className="p-4">
+                      <div className="flex items-center space-x-4">
+                        <motion.div
+                          whileHover={{ scale: 1.1, rotate: 5 }}
+                          className={`w-12 h-12 ${link.bgColor} rounded-lg flex items-center justify-center text-white shadow-lg transition-all duration-300`}
+                        >
+                          {link.icon}
+                        </motion.div>
+                        <div className="flex-1">
+                          <h3 className="text-white font-semibold group-hover:text-orange-400 transition-colors duration-300">
+                            {t(link.titleKey)}
+                          </h3>
+                          <p className="text-gray-400 text-sm group-hover:text-gray-300 transition-colors duration-300">
+                            {t(link.descriptionKey)}
+                          </p>
+                        </div>
+                        <motion.div whileHover={{ scale: 1.2, x: 3 }} transition={{ duration: 0.2 }}>
+                          <ExternalLink className="h-5 w-5 text-gray-400 group-hover:text-orange-400 transition-colors duration-300" />
+                        </motion.div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </motion.a>
+              ))}
+            </AnimatedSection>
+
+            {/* Mobile Product Pages Carousel */}
+            <AnimatedSection className="px-2">
+              <Card className="bg-gray-800/50 backdrop-blur-sm border-gray-700/50 mb-8 shadow-lg hover:shadow-xl transition-all duration-500">
+                <CardContent className="p-4">
+                  <div className="text-center mb-6">
+                    <h2 className="text-xl font-light text-white mb-2">{t("explore.collection")}</h2>
+                    <p className="text-gray-400 text-sm font-light">{t("collection.subtitle")}</p>
                   </div>
 
                   <ProductCarouselPages
@@ -577,241 +816,219 @@ export default function SaybaArcLinktree() {
                   />
                 </CardContent>
               </Card>
-            </div>
-          </div>
-
-          {/* Mobile Layout */}
-          <div className="lg:hidden max-w-md mx-auto">
-            {/* Mobile Hero */}
-            <div className="text-center mb-8">
-              <div className="mb-6">
-                <div className="w-32 h-32 mx-auto rounded-full border-3 border-orange-500 shadow-2xl flex items-center justify-center overflow-hidden relative glow-hover interactive-scale">
-                  <Image
-                    src="/sayba-square-logo.png"
-                    alt="Sayba Arc - Art You Believe"
-                    width={128}
-                    height={128}
-                    className="w-full h-full object-cover rounded-full"
-                  />
-                </div>
-              </div>
-              <h1 className="text-2xl font-bold text-white mb-2">{t("sayba.arc")}</h1>
-              <p className="text-gray-300 text-sm mb-4">{t("art.you.believe")}</p>
-              <p className="text-gray-400 text-xs leading-relaxed">{t("hero.mobile.description")}</p>
-            </div>
-
-            {/* Mobile Main Links */}
-            <div className="space-y-4 mb-8">
-              {mainLinks.map((link, index) => (
-                <a
-                  key={index}
-                  href={link.link}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="block group"
-                  onClick={handleLinkClick}
-                >
-                  <Card className="bg-gray-800 border-gray-700 hover:bg-gray-750 transition-all duration-300 hover:scale-[1.02] glow-hover interactive-scale shadow-lg">
-                    <CardContent className="p-4">
-                      <div className="flex items-center space-x-4">
-                        <div
-                          className={`w-12 h-12 ${link.bgColor} rounded-lg flex items-center justify-center text-white shadow-lg glow-hover`}
-                        >
-                          {link.icon}
-                        </div>
-                        <div className="flex-1">
-                          <h3 className="text-white font-semibold group-hover:text-orange-400 transition-colors">
-                            {t(link.titleKey)}
-                          </h3>
-                          <p className="text-gray-400 text-sm">{t(link.descriptionKey)}</p>
-                        </div>
-                        <ExternalLink className="h-5 w-5 text-gray-400 group-hover:text-orange-400 transition-colors" />
-                      </div>
-                    </CardContent>
-                  </Card>
-                </a>
-              ))}
-            </div>
-
-            {/* Mobile Product Pages Carousel */}
-            <Card className="bg-gray-800 border-gray-700 mb-8 glow-hover shadow-lg">
-              <CardContent className="p-6">
-                <div className="text-center mb-6">
-                  <h2 className="text-xl font-semibold text-white mb-2">{t("explore.collection")}</h2>
-                  <p className="text-gray-400 text-sm">{t("collection.subtitle")}</p>
-                </div>
-
-                <ProductCarouselPages
-                  products={products}
-                  currentSlide={currentSlide}
-                  onSlideChange={setCurrentSlide}
-                  onProductClick={openProductModal}
-                  isAutoPlaying={isAutoPlaying}
-                />
-              </CardContent>
-            </Card>
+            </AnimatedSection>
           </div>
         </div>
       </div>
 
       {/* Footer */}
-      <footer className="bg-gray-900/95 border-t border-gray-700 py-8">
-        <div className="container mx-auto px-4 lg:px-8">
-          <div className="max-w-4xl mx-auto">
-            <div className="grid md:grid-cols-2 gap-8">
-              <Card className="bg-gray-800 border-gray-700 glow-hover shadow-lg">
-                <CardContent className="p-6">
-                  <h3 className="text-xl font-semibold text-white mb-4">{t("get.in.touch")}</h3>
-                  <div className="space-y-3">
-                    <a
-                      href="mailto:sayba.help@gmail.com"
-                      onClick={handleLinkClick}
-                      onMouseEnter={playHover}
-                      className="flex items-center space-x-3 text-gray-300 hover:text-orange-400 transition-colors glow-hover interactive-scale"
-                    >
-                      <Mail className="h-5 w-5" />
-                      <span className="text-sm">sayba.help@gmail.com</span>
-                    </a>
-                    <a
-                      href="tel:+6287721916495"
-                      onClick={handleLinkClick}
-                      onMouseEnter={playHover}
-                      className="flex items-center space-x-3 text-gray-300 hover:text-orange-400 transition-colors glow-hover interactive-scale"
-                    >
-                      <Phone className="h-5 w-5" />
-                      <span className="text-sm">+62 877-2191-6495</span>
-                    </a>
-                    <a
-                      href="https://www.sayba.shop"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      onClick={handleLinkClick}
-                      onMouseEnter={playHover}
-                      className="flex items-center space-x-3 text-gray-300 hover:text-orange-400 transition-colors glow-hover interactive-scale"
-                    >
-                      <Globe className="h-5 w-5" />
-                      <span className="text-sm">www.sayba.shop</span>
-                    </a>
-                  </div>
-                </CardContent>
-              </Card>
+      <AnimatedSection>
+        <footer className="bg-gray-900/95 border-t border-gray-700 py-8">
+          <div className="container mx-auto px-4 lg:px-8">
+            <div className="max-w-4xl mx-auto">
+              <motion.div
+                variants={staggerContainer}
+                initial="initial"
+                whileInView="animate"
+                viewport={{ once: true }}
+                className="grid md:grid-cols-2 gap-8"
+              >
+                <motion.div variants={fadeInLeft}>
+                  <Card className="bg-gray-800/50 backdrop-blur-sm border-gray-700/50 shadow-lg hover:shadow-xl transition-all duration-500">
+                    <CardContent className="p-6">
+                      <h3 className="text-xl font-semibold text-white mb-4">{t("get.in.touch")}</h3>
+                      <div className="space-y-3">
+                        <motion.a
+                          href="mailto:sayba.help@gmail.com"
+                          onClick={handleLinkClick}
+                          onMouseEnter={playHover}
+                          whileHover={{ scale: 1.02, x: 5 }}
+                          className="flex items-center space-x-3 text-gray-300 hover:text-orange-400 transition-all duration-300"
+                        >
+                          <Mail className="h-5 w-5" />
+                          <span className="text-sm">sayba.help@gmail.com</span>
+                        </motion.a>
+                        <motion.a
+                          href="tel:+6287721916495"
+                          onClick={handleLinkClick}
+                          onMouseEnter={playHover}
+                          whileHover={{ scale: 1.02, x: 5 }}
+                          className="flex items-center space-x-3 text-gray-300 hover:text-orange-400 transition-all duration-300"
+                        >
+                          <Phone className="h-5 w-5" />
+                          <span className="text-sm">+62 877-2191-6495</span>
+                        </motion.a>
+                        <motion.a
+                          href="https://www.sayba.shop"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          onClick={handleLinkClick}
+                          onMouseEnter={playHover}
+                          whileHover={{ scale: 1.02, x: 5 }}
+                          className="flex items-center space-x-3 text-gray-300 hover:text-orange-400 transition-all duration-300"
+                        >
+                          <Globe className="h-5 w-5" />
+                          <span className="text-sm">www.sayba.shop</span>
+                        </motion.a>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </motion.div>
 
-              <Card className="bg-gray-800 border-gray-700 glow-hover shadow-lg">
-                <CardContent className="p-6">
-                  <h3 className="text-xl font-semibold text-white mb-4">{t("why.choose.us")}</h3>
-                  <div className="space-y-3">
-                    <div className="flex items-start space-x-3">
-                      <div className="w-2 h-2 bg-orange-500 rounded-full mt-2"></div>
-                      <p className="text-gray-300 text-sm">{t("professional.quality")}</p>
-                    </div>
-                    <div className="flex items-start space-x-3">
-                      <div className="w-2 h-2 bg-orange-500 rounded-full mt-2"></div>
-                      <p className="text-gray-300 text-sm">{t("fast.turnaround")}</p>
-                    </div>
-                    <div className="flex items-start space-x-3">
-                      <div className="w-2 h-2 bg-orange-500 rounded-full mt-2"></div>
-                      <p className="text-gray-300 text-sm">{t("customer.support")}</p>
-                    </div>
-                    <div className="flex items-start space-x-3">
-                      <div className="w-2 h-2 bg-orange-500 rounded-full mt-2"></div>
-                      <p className="text-gray-300 text-sm">{t("competitive.pricing")}</p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
+                <motion.div variants={fadeInRight}>
+                  <Card className="bg-gray-800/50 backdrop-blur-sm border-gray-700/50 shadow-lg hover:shadow-xl transition-all duration-500">
+                    <CardContent className="p-6">
+                      <h3 className="text-xl font-semibold text-white mb-4">{t("why.choose.us")}</h3>
+                      <div className="space-y-3">
+                        <motion.div
+                          whileHover={{ x: 5 }}
+                          className="flex items-start space-x-3 transition-all duration-300"
+                        >
+                          <div className="w-2 h-2 bg-orange-500 rounded-full mt-2"></div>
+                          <p className="text-gray-300 text-sm">{t("professional.quality")}</p>
+                        </motion.div>
+                        <motion.div
+                          whileHover={{ x: 5 }}
+                          className="flex items-start space-x-3 transition-all duration-300"
+                        >
+                          <div className="w-2 h-2 bg-orange-500 rounded-full mt-2"></div>
+                          <p className="text-gray-300 text-sm">{t("fast.turnaround")}</p>
+                        </motion.div>
+                        <motion.div
+                          whileHover={{ x: 5 }}
+                          className="flex items-start space-x-3 transition-all duration-300"
+                        >
+                          <div className="w-2 h-2 bg-orange-500 rounded-full mt-2"></div>
+                          <p className="text-gray-300 text-sm">{t("customer.support")}</p>
+                        </motion.div>
+                        <motion.div
+                          whileHover={{ x: 5 }}
+                          className="flex items-start space-x-3 transition-all duration-300"
+                        >
+                          <div className="w-2 h-2 bg-orange-500 rounded-full mt-2"></div>
+                          <p className="text-gray-300 text-sm">{t("competitive.pricing")}</p>
+                        </motion.div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </motion.div>
+              </motion.div>
 
-            <div className="text-center text-gray-500 text-xs mt-8 pt-6 border-t border-gray-700">
-              <p>{t("copyright")}</p>
-              <p className="mt-1">{t("powered.by")}</p>
+              <motion.div
+                initial={{ opacity: 0 }}
+                whileInView={{ opacity: 1 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.5 }}
+                className="text-center text-gray-500 text-xs mt-8 pt-6 border-t border-gray-700"
+              >
+                <p>{t("copyright")}</p>
+                <p className="mt-1">{t("powered.by")}</p>
+              </motion.div>
             </div>
           </div>
-        </div>
-      </footer>
+        </footer>
+      </AnimatedSection>
 
-      {/* Enhanced Product Detail Modal with Swipe */}
+      {/* Enhanced Product Detail Modal */}
       {isModalOpen && selectedProduct && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
-          <div className="bg-gray-800 rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-gray-700 shadow-2xl">
-            {/* Modal Header with Navigation */}
-            <div className="relative p-6 border-b border-gray-700">
-              <button
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm"
+        >
+          <motion.div
+            initial={{ scale: 0.9, opacity: 0, y: 20 }}
+            animate={{ scale: 1, opacity: 1, y: 0 }}
+            exit={{ scale: 0.9, opacity: 0, y: 20 }}
+            transition={{ type: "spring", damping: 25, stiffness: 300 }}
+            className="bg-gray-800/95 backdrop-blur-sm rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-gray-700/50 shadow-2xl"
+          >
+            {/* Modal Header */}
+            <div className="relative p-6 border-b border-gray-700/50">
+              <motion.button
                 onClick={closeModal}
                 onMouseEnter={playHover}
-                className="absolute top-4 right-4 text-gray-400 hover:text-white transition-colors glow-hover interactive-scale"
+                whileHover={{ scale: 1.1, rotate: 90 }}
+                whileTap={{ scale: 0.9 }}
+                className="absolute top-4 right-4 text-gray-400 hover:text-white transition-colors duration-300 z-10"
               >
                 <X className="h-6 w-6" />
-              </button>
+              </motion.button>
 
-              <div className="flex items-center justify-between">
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={prevModalSlide}
-                  onMouseEnter={playHover}
-                  className="text-gray-400 hover:text-white glow-hover interactive-scale button-glow-bg"
-                >
-                  <ChevronLeft className="h-6 w-6" />
-                </Button>
-
-                <div className="flex items-center space-x-4">
-                  <div className="w-16 h-16 rounded-xl overflow-hidden shadow-lg">
-                    <Image
-                      src={selectedProduct.image || "/placeholder.svg"}
-                      alt={t(selectedProduct.titleKey)}
-                      width={64}
-                      height={64}
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                  <div className="text-center">
-                    <h2 className="text-2xl font-bold text-white">{t(selectedProduct.titleKey)}</h2>
-                    <p className="text-orange-400 font-medium">{t(selectedProduct.subtitleKey)}</p>
-                  </div>
-                </div>
-
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={nextModalSlide}
-                  onMouseEnter={playHover}
-                  className="text-gray-400 hover:text-white glow-hover interactive-scale button-glow-bg"
-                >
-                  <ChevronRight className="h-6 w-6" />
-                </Button>
+              <div className="text-center">
+                <h2 className="text-2xl font-bold text-white mb-2">{t(selectedProduct.titleKey)}</h2>
+                <p className="text-orange-400 font-medium">{t(selectedProduct.subtitleKey)}</p>
               </div>
             </div>
 
-            {/* Modal Content with Touch Support */}
-            <div
-              className="p-6"
-              onTouchStart={handleModalTouchStart}
-              onTouchMove={handleModalTouchMove}
-              onTouchEnd={handleModalTouchEnd}
-            >
-              <div className="mb-6">
+            {/* Modal Content */}
+            <div className="p-6">
+              {/* Product Image - Smaller Size */}
+              <div className="relative mb-6">
+                <div className="w-full max-w-xs mx-auto aspect-square rounded-xl overflow-hidden shadow-lg">
+                  <Image
+                    src={selectedProduct.image || "/placeholder.svg"}
+                    alt={t(selectedProduct.titleKey)}
+                    width={300}
+                    height={300}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+
+                {/* Navigation Buttons */}
+                <motion.button
+                  onClick={prevModalSlide}
+                  onMouseEnter={playHover}
+                  whileHover={{ scale: 1.1, x: -2 }}
+                  whileTap={{ scale: 0.9 }}
+                  className="absolute left-4 top-1/2 transform -translate-y-1/2 w-10 h-10 bg-gray-900/90 backdrop-blur-sm border border-gray-600 text-white hover:bg-orange-500/20 hover:border-orange-500 hover:text-orange-400 transition-all duration-300 rounded-full shadow-lg z-10"
+                >
+                  <ChevronLeft className="h-5 w-5 mx-auto" />
+                </motion.button>
+
+                <motion.button
+                  onClick={nextModalSlide}
+                  onMouseEnter={playHover}
+                  whileHover={{ scale: 1.1, x: 2 }}
+                  whileTap={{ scale: 0.9 }}
+                  className="absolute right-4 top-1/2 transform -translate-y-1/2 w-10 h-10 bg-gray-900/90 backdrop-blur-sm border border-gray-600 text-white hover:bg-orange-500/20 hover:border-orange-500 hover:text-orange-400 transition-all duration-300 rounded-full shadow-lg z-10"
+                >
+                  <ChevronRight className="h-5 w-5 mx-auto" />
+                </motion.button>
+              </div>
+
+              {/* Product Info - Left-aligned */}
+              <div className="text-left mb-6">
                 <h3 className="text-lg font-semibold text-white mb-3">{t("service.description")}</h3>
-                <p className="text-gray-300 leading-relaxed mb-4">{t(selectedProduct.descriptionKey)}</p>
+                <p className="text-gray-300 leading-relaxed mb-4 text-left">{t(selectedProduct.descriptionKey)}</p>
 
                 <div className="space-y-4">
                   <div>
                     <h4 className="text-white font-medium mb-2">{t("services.provided")}</h4>
-                    <ul className="text-gray-300 space-y-1 text-sm">
+                    <ul className="text-gray-300 space-y-1 text-sm text-left">
                       {selectedProduct.details?.features.map((feature, index) => (
-                        <li key={index}>• {feature}</li>
+                        <motion.li
+                          key={index}
+                          initial={{ opacity: 0, x: -10 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ delay: index * 0.1 }}
+                        >
+                          • {feature}
+                        </motion.li>
                       ))}
                     </ul>
                   </div>
                 </div>
               </div>
 
-              <div className="bg-gray-700 rounded-lg p-4 mb-6">
+              <div className="bg-gray-700/50 rounded-lg p-4 mb-6">
                 <h4 className="text-white font-medium mb-2">{t("price.delivery")}</h4>
                 <div className="grid grid-cols-2 gap-4 text-sm">
                   <div>
                     <span className="text-gray-400">{t("price.from")}</span>
                     <p className="text-orange-400 font-semibold">
-                      {selectedProduct.details?.pricing || "Hubungi untuk quote"}
+                      Mulai dari {selectedProduct.details?.pricing || "Hubungi untuk quote"}
                     </p>
                   </div>
                   <div>
@@ -822,28 +1039,30 @@ export default function SaybaArcLinktree() {
               </div>
 
               <div className="flex justify-between items-center">
-                <div className="text-sm text-gray-400">
+                <div className="text-sm text-gray-400 text-left">
                   <p>{t("custom.quote")}</p>
                   <p>{t("contact.pricing")}</p>
                 </div>
 
-                <a
+                <motion.a
+                  whileHover={{ scale: 1.05, boxShadow: "0 0 20px rgba(34, 197, 94, 0.4)" }}
+                  whileTap={{ scale: 0.95 }}
                   href="https://wa.me/6287721916495?text=_%2ASayba+Arc%2A_%0A%2AWebsite%2A+%E2%86%92+www.sayba.shop%0A%2AInstagram%2A+%E2%86%92+%40sayba.arc&type=phone_number&app_absent=0"
                   target="_blank"
                   rel="noopener noreferrer"
                   onClick={handleLinkClick}
                   onMouseEnter={playHover}
-                  className="bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white px-8 py-3 rounded-xl font-semibold transition-all duration-300 hover:scale-105 shadow-lg flex items-center space-x-2 glow-hover interactive-scale"
+                  className="bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white px-6 py-3 rounded-xl font-semibold transition-all duration-300 shadow-lg flex items-center space-x-2 min-h-[48px] touch-manipulation"
                 >
                   <MessageCircle className="h-5 w-5" />
-                  <span>{t("order.now")}</span>
-                </a>
+                  <span>Pesan</span>
+                </motion.a>
               </div>
 
-              {/* Modal Slide Indicators */}
-              <div className="flex justify-center space-x-2 mt-6">
+              {/* Modal Slide Indicators - Much Smaller without shadows */}
+              <div className="flex justify-center space-x-1.5 mt-6">
                 {products.map((_, index) => (
-                  <button
+                  <motion.button
                     key={index}
                     onClick={() => {
                       setModalSlide(index)
@@ -851,15 +1070,21 @@ export default function SaybaArcLinktree() {
                       playClick()
                     }}
                     onMouseEnter={playHover}
-                    className={`w-2 h-2 rounded-full transition-all duration-300 glow-hover interactive-scale ${
-                      modalSlide === index ? "bg-orange-500 scale-125" : "bg-gray-600 hover:bg-gray-500"
+                    whileHover={{ scale: 1.5 }}
+                    whileTap={{ scale: 0.8 }}
+                    className={`w-1.5 h-1.5 rounded-full transition-all duration-300 min-h-[24px] min-w-[24px] flex items-center justify-center touch-manipulation ${
+                      modalSlide === index ? "bg-orange-500" : "bg-gray-600 hover:bg-gray-500"
                     }`}
-                  />
+                  >
+                    <div
+                      className={`w-1.5 h-1.5 rounded-full ${modalSlide === index ? "bg-orange-500" : "bg-gray-600"}`}
+                    />
+                  </motion.button>
                 ))}
               </div>
             </div>
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
       )}
     </div>
   )
